@@ -18,14 +18,6 @@ def get_posible_families(experiment_data):
 def filter_by_family(experiment_data, families, family_name, family):
     return experiment_data[[family_name in conjunto or family in conjunto for conjunto in families]]
 
-def filter_by_rt(datasets):
-    # Ordenar datasets por RT
-    for dataset in datasets:
-        dataset.sort_values(by="rt", inplace=True)
-        dataset = dataset[dataset['rt'] > dataset['column.t0']]
-    
-    return datasets
-
 # Filtra el dataset según su configuración 
 def filter_by_config(data_family, config):
     usp_columns = [
@@ -59,3 +51,6 @@ def filter_by_config(data_family, config):
 
     # Filtrar los datos que cumplen la condición
     return data_family[combined_condition]
+
+def filter_rt_ltn_t0(datasets):
+    return [df[df['rt'] > df['column.t0']] for df in datasets]

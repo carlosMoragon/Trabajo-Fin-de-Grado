@@ -11,3 +11,8 @@ def preprocesar_dataset(dataset):
     dataset['name'] = dataset['name'].astype('str')
     dataset['comment'] = dataset['comment'].astype('str')
     return dataset
+
+def to_Excel(datasets, path="../../tmp/excel.xlsx"):
+    with pd.ExcelWriter(path) as writer:
+        for i, df in enumerate(datasets, start=1):  # start=1 para que los números empiecen desde 1
+            df.to_excel(writer, sheet_name=str(i), index=False)
