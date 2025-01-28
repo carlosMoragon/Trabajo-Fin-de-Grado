@@ -54,6 +54,8 @@ def main():
 
     print([tupla[1] for tupla in lista_tuplas])
 
+    print(f'\n\n\n{lista_tuplas}')
+
     return lista_tuplas
     
 
