@@ -12,3 +12,7 @@ def alpha(rta, rtb, t0a, t0b):
 
 def diff(rta, rtb, total):
     return (rtb - rta) / total
+
+def best_config(lista_tuplas):
+    mejor = max(lista_tuplas, key=lambda tupla: float(tupla[1]))
+    return mejor[0]

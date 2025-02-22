@@ -1,12 +1,17 @@
 from core.data_processing import cargar_dataset, preprocesar_dataset, to_Excel
 from core.feature_extraction import get_types_of_experiments, get_family_name, filter_rt_ltn_t0
-from core.calculations import fscore_mejor_caso, fscore_peor_caso, fscore_caso_medio
+from core.calculations import fscore_mejor_caso, fscore_peor_caso, fscore_caso_medio, best_config
 from core.processing import process_experiments, calculate_results, build_results_list
 
 import config
 import argparse
 
+import sys
+import os
+
+
 def main():
+    sys.stderr = open(os.devnull, "w")
 
     # Crear un parser para recibir los argumentos desde la terminal
     parser = argparse.ArgumentParser(description="(Obligatorio) Introduce la clase a evaluar como primer parámetro.\n(No obligatorio) Especifica en caso lo quieres evaluar: peor, medio o mejor.\n(No obligatorio) Si deseas puedes especificar el modo de evaluación: 'alpha' o 'diff'")
@@ -44,7 +49,7 @@ def main():
     datasets = filter_rt_ltn_t0(result_datasets)
 
 
-    to_Excel(datasets, "../tmp/excel0.xlsx")
+    #to_Excel(datasets, "../tmp/excel0_apha_2.xlsx")
 
     # Calcular resultados de alpha
     resultados = calculate_results(datasets, is_alpha=is_alpha)
@@ -52,15 +57,20 @@ def main():
     # Construir la lista de resultados finales
     lista_tuplas = build_results_list(configs, resultados, fscore)
 
-    posiciones_negativas = [i for i, tupla in enumerate(lista_tuplas) if float(tupla[1]) < 0]
-    print(f'{posiciones_negativas}\n{len(posiciones_negativas)}/{len(lista_tuplas)}\n\n')
+    #posiciones_negativas = [i for i, tupla in enumerate(lista_tuplas) if float(tupla[1]) < 0]
+    #print(f'{posiciones_negativas}\n{len(posiciones_negativas)}/{len(lista_tuplas)}\n\n')
 
-    print([tupla[1] for tupla in lista_tuplas])
+    #print([tupla[1] for tupla in lista_tuplas])
 
-    print(f'\n\n\n{lista_tuplas}')
+    #print(f'\n\n\n{lista_tuplas}')
 
+    #resultado = best_config(lista_tuplas)
+
+    #print(resultado)
+    for tupla in lista_tuplas:
+        print(f'{family}, {tupla[0]}, {tupla[1]}\n')
+    #return best_config
     
-
 
 if __name__ == "__main__":
     main()

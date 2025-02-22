@@ -65,6 +65,7 @@ def calculate_alpha_results(dataset):
     return resultados_dataset
 
 def calculate_diff_results(dataset):
+    dataset = dataset.sort_values(by='rt').reset_index(drop=True)
     resultados_dataset = []
     ultimo_elemento = dataset.iloc[len(dataset)-1]
     total = ultimo_elemento['rt']
