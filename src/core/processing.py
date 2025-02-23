@@ -19,7 +19,7 @@ def create_config_objects(dataset):
             name=row['column.name'],
             usp_code=get_uspcode(row),
             length=row['column.length'],
-            id=row['column.id'],
+            #id=row['column.id'],
             particle_size=row['column.particle.size'],
             temperature=row['column.temperature'],
             flowrate=row['column.flowrate'],
@@ -88,6 +88,78 @@ def calculate_results(result_datasets, is_alpha):
             resultados.append(calculate_diff_results(dataset))
     return resultados
 
+def calcular_resultados_confiables(result_datasets, is_alpha, max_datos):
+    """
+    Calcula los resultados de las configuraciones y los pondera con la confianza
+    calculada en función del tamaño de los datos.
+
+    :param result_datasets: Lista de datasets por configuración
+    :param is_alpha: True para calcular alpha, False para calcular diff
+    :param max_datos: Número máximo de datos entre todas las configuraciones
+    :return: Lista de resultados ponderados por la confianza
+    """
+    resultados_finales = []
+
+    for dataset in result_datasets:
+        if dataset.empty:
+            continue
+
+        # Obtener la cantidad de datos de esta configuración
+        n_datos = len(dataset)
+        
+        # Calcular la confianza
+        confianza = calcular_confianza(n_datos, max_datos)
+
+        # Calcular los resultados (alpha o diff)
+        if is_alpha:
+            resultados = calculate_alpha_results(dataset)
+        else:
+            resultados = calculate_diff_results(dataset)
+
+        # Calcular el score promedio (esto es solo un ejemplo, puede ser adaptado)
+        score_promedio = sum(resultados) / len(resultados) if resultados else 0
+
+        # Ponderar el score con la confianza
+        score_final = score_promedio * confianza
+
+        # Guardar el resultado final junto con el score ponderado
+        resultados_finales.append((score_promedio, confianza, score_final))
+
+    return resultados_finales
+
+def calcular_confianza(n_datos, max_datos):
+    """
+    Calcula la confianza de una configuración basada en la cantidad de datos
+    que tiene en comparación con la configuración con más datos.
+    
+    :param n_datos: Número de datos en la configuración
+    :param max_datos: Número máximo de datos entre todas las configuraciones
+    :return: Un valor de confianza entre 0 y 1
+    """
+    return n_datos / max_datos
+
+
+def build_results_list(configs, resultados, fscore):
+    """
+    Construye la lista de resultados finales, con el score ponderado por confianza.
+    
+    :param configs: Lista de configuraciones
+    :param resultados: Resultados calculados para cada configuración
+    :param fscore: Función de puntuación (por ejemplo, fscore_mejor_caso)
+    :return: Lista de tuplas (configuración, score final)
+    """
+    lista_tuplas = []
+    
+    for i, config in enumerate(configs):
+        score_promedio, confianza, score_final = resultados[i]
+        lista_tuplas.append((config, score_final))#score_promedio, confianza, score_final))
+
+    # Ordenar por el score final, de mayor a menor
+    lista_tuplas = sorted(lista_tuplas, key=lambda x: x[1], reverse=True)#x[3], reverse=True)
+    
+    return lista_tuplas
+
+'''
 def build_results_list(configs, resultados, fscore):
     lista_tuplas = []
     for i in range(min(len(configs), len(resultados))):
@@ -95,3 +167,4 @@ def build_results_list(configs, resultados, fscore):
         score = fscore(resultados[i])
         lista_tuplas.append((configs[i].__str__(), score.__str__()))  # Emparejamos config con su puntaje
     return lista_tuplas
+'''

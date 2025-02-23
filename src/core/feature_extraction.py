@@ -41,7 +41,7 @@ def filter_by_config(data_family, config):
     combined_condition = (
         (data_family['column.name'] == config.columna.name) &
         (data_family['column.length'] == config.columna.length) &
-        (data_family['column.id'] == config.columna.id) &
+        #(data_family['column.id'] == config.columna.id) &
         (data_family['column.particle.size'] == config.columna.particle_size) &
         (data_family['column.temperature'] == config.columna.temperature) &
         (data_family['column.flowrate'] == config.columna.flowrate) &

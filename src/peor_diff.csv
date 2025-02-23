@@ -1,0 +1,4 @@
+Clase,Eluyente1,Eluyente2,Columna,USP Code,Length,ID,Particle Size,Temperature,Flowrate,T0,Valor
+Aryltetralin lignans (CHEMONTID:0003425),eluent.1.h2o 0,eluent.2.acn 0,Agilent ZORBAX Extend-C18,column.usp.code_L1,50.0,2.1,1.8,35.0,0.1,1.1025,0
+Aryltetralin lignans (CHEMONTID:0003425),eluent.1.h2o 0,eluent.2.acn 0,Waters ACQUITY UPLC BEH C18,column.usp.code_L1,50.0,2.1,1.7,40.0,0.6,0.18375,0.0010556027262087655
+Aryltetralin lignans (CHEMONTID:0003425),eluent.1.h2o 0,eluent.2.acn 0,Waters ACQUITY UPLC BEH C18,column.usp.code_L1,50.0,2.1,1.7,40.0,0.6,0.18375,0
