@@ -28,8 +28,24 @@ def create_config_objects(dataset):
 
         eluyente1 = next((key for key in dataset.columns if key.startswith('eluent.1.') and row[key] == 100), None)
         eluyente2 = next((key for key in dataset.columns if key.startswith('eluent.2.') and row[key] == 100), None)
+        #ph1 = row['eluent.1.pH 0']
+        #ph2 = row['eluent.2.pH 0']
+        ph1 = row.get('eluent.1.pH 0', (0,))
+        ph2 = row.get('eluent.2.pH 0', (0,))
 
-        config = Config(eluyente1=eluyente1, eluyente2=eluyente2, columna=columna)
+        #ph1 = ph1[0]  # Extrae el primer elemento de la tupla
+        #ph2 = ph2[0]
+
+        ph1 = float(ph1)  # Convierte a float
+        ph2 = float(ph2)
+
+        #print(type(ph1), type(ph2), ph1, ph2)  # Debe imprimir: <class 'float'> <class 'float'> 3.0 3.0
+
+
+
+
+
+        config = Config(eluyente1=eluyente1, eluyente2=eluyente2, ph1=ph1, ph2=ph2, columna=columna)
         config_objects.add(config)
 
     return list(config_objects)

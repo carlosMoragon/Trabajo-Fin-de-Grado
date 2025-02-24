@@ -10,7 +10,7 @@ import sys
 import os
 
 def main():
-    sys.stderr = open(os.devnull, "w")
+    #sys.stderr = open(os.devnull, "w")
 
     # Crear un parser para recibir los argumentos desde la terminal
     parser = argparse.ArgumentParser(description="(Obligatorio) Introduce la clase a evaluar como primer parámetro.\n(No obligatorio) Especifica en caso lo quieres evaluar: peor, medio o mejor.\n(No obligatorio) Si deseas puedes especificar el modo de evaluación: 'alpha' o 'diff'")
