@@ -16,8 +16,8 @@ with open('parametros_parcial.txt', 'r') as file:
             params = [param.replace('"', '') for param in params]
             
             # Asegurarse de que la línea tenga exactamente tres parámetros
-            if len(params) == 3:
-                param1, param2, param3 = params
+            if len(params) == 2:#3:
+                param1, param2 = params#, param3 = params
                 # Ejecutar el script 'main.py' pasando los parámetros y redirigir la salida al archivo
-                result = subprocess.run(['python', 'main.py', param1, param2, param3],
+                result = subprocess.run(['python', 'main.py', param1, param2],#, param2, param3],
                                         stdout=output, stderr=subprocess.STDOUT)

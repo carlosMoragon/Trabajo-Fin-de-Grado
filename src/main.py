@@ -16,18 +16,18 @@ def main():
     parser = argparse.ArgumentParser(description="(Obligatorio) Introduce la clase a evaluar como primer parámetro.\n(No obligatorio) Especifica en caso lo quieres evaluar: peor, medio o mejor.\n(No obligatorio) Si deseas puedes especificar el modo de evaluación: 'alpha' o 'diff'")
 
     parser.add_argument('family', help="Introduce la clase a evaluar", nargs='?', default='Organooxygen compounds (CHEMONTID:0000323)')
-    parser.add_argument('eval', help="Evaluar en el 'mejor' caso, caso 'medio' o 'peor' caso?", nargs='?', default='peor')
+    #parser.add_argument('eval', help="Evaluar en el 'mejor' caso, caso 'medio' o 'peor' caso?", nargs='?', default='peor')
     parser.add_argument('modo', choices=['alpha', 'diff'], help="El segundo argumento (opcional)", nargs='?', default=('alpha' if config.IS_ALPHA else 'diff'))
 
     args = parser.parse_args()
 
     # Determinar el método fscore adecuado
-    if args.eval == 'mejor':
-        fscore = fscore_mejor_caso
-    elif args.eval == 'peor':
-        fscore = fscore_peor_caso
-    elif args.eval == 'medio':
-        fscore = fscore_caso_medio
+    #if args.eval == 'mejor':
+    #    fscore = fscore_mejor_caso
+    #elif args.eval == 'peor':
+    #    fscore = fscore_peor_caso
+    #elif args.eval == 'medio':
+    #    fscore = fscore_caso_medio
 
     # Determinar si es modo alpha o diff
     is_alpha = True if args.modo == 'alpha' else False
@@ -48,7 +48,7 @@ def main():
     resultados_confiables = calcular_resultados_confiables(result_datasets, is_alpha, max_datos)
 
     # Construir la lista de resultados finales con los scores ponderados
-    lista_tuplas = build_results_list(configs, resultados_confiables, fscore)
+    lista_tuplas = build_results_list(configs, resultados_confiables)#, fscore)
 
     for tupla in lista_tuplas:
         print(f'{family}, {tupla[0]}, {tupla[1]}')#, Score Promedio: {tupla[1]}, Confianza: {tupla[2]}, Score Final: {tupla[3]}\n')

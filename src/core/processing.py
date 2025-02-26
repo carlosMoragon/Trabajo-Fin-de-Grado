@@ -28,19 +28,12 @@ def create_config_objects(dataset):
 
         eluyente1 = next((key for key in dataset.columns if key.startswith('eluent.1.') and row[key] == 100), None)
         eluyente2 = next((key for key in dataset.columns if key.startswith('eluent.2.') and row[key] == 100), None)
-        #ph1 = row['eluent.1.pH 0']
-        #ph2 = row['eluent.2.pH 0']
+
         ph1 = row.get('eluent.1.pH 0', (0,))
         ph2 = row.get('eluent.2.pH 0', (0,))
 
-        #ph1 = ph1[0]  # Extrae el primer elemento de la tupla
-        #ph2 = ph2[0]
-
-        ph1 = float(ph1)  # Convierte a float
+        ph1 = float(ph1)
         ph2 = float(ph2)
-
-        #print(type(ph1), type(ph2), ph1, ph2)  # Debe imprimir: <class 'float'> <class 'float'> 3.0 3.0
-
 
 
 
@@ -104,6 +97,8 @@ def calculate_results(result_datasets, is_alpha):
             resultados.append(calculate_diff_results(dataset))
     return resultados
 
+
+
 def calcular_resultados_confiables(result_datasets, is_alpha, max_datos):
     """
     Calcula los resultados de las configuraciones y los pondera con la confianza
@@ -132,16 +127,20 @@ def calcular_resultados_confiables(result_datasets, is_alpha, max_datos):
         else:
             resultados = calculate_diff_results(dataset)
 
-        # Calcular el score promedio (esto es solo un ejemplo, puede ser adaptado)
+        # Asegurar que los valores negativos de alpha/diff no arruinen el cálculo
+        resultados = [max(0, r) for r in resultados]  # Eliminar valores negativos
+        
+        # Calcular el score promedio
         score_promedio = sum(resultados) / len(resultados) if resultados else 0
 
-        # Ponderar el score con la confianza
-        score_final = score_promedio * confianza
+        # Ponderar el score con la confianza y evitar negativos
+        score_final = max(0, score_promedio * confianza)
 
-        # Guardar el resultado final junto con el score ponderado
+        # Guardar el resultado final
         resultados_finales.append((score_promedio, confianza, score_final))
 
     return resultados_finales
+
 
 def calcular_confianza(n_datos, max_datos):
     """
@@ -155,7 +154,7 @@ def calcular_confianza(n_datos, max_datos):
     return n_datos / max_datos
 
 
-def build_results_list(configs, resultados, fscore):
+def build_results_list(configs, resultados):
     """
     Construye la lista de resultados finales, con el score ponderado por confianza.
     

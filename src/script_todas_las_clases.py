@@ -22,7 +22,7 @@ def leer_clases_desde_archivo(archivo):
     
     return clases
 
-def ejecutar_clases(archivo_clases, param1, param2, archivo_salida):
+def ejecutar_clases(archivo_clases, param2, archivo_salida):#param1, param2, archivo_salida):
     try:
         clases = leer_clases_desde_archivo(archivo_clases)
         print(f"Clases leídas: {clases}")  # Mensaje de depuración para verificar que se leen todas las clases
@@ -36,7 +36,7 @@ def ejecutar_clases(archivo_clases, param1, param2, archivo_salida):
             for clase in clases:
                 print(f"Ejecutando para la clase: {clase}")  # Agregar mensaje de depuración para cada clase
                 result = subprocess.run(
-                    ['python', 'main.py', clase, param1, param2],
+                    ['python', 'main.py', clase, param2],#param1, param2],
                     capture_output=True,
                     text=True
                 )
@@ -62,13 +62,13 @@ def ejecutar_clases(archivo_clases, param1, param2, archivo_salida):
         print(f"Error: {e}")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 3: #4:
         print("Uso: python script.py <param1> <param2> <archivo_salida>")
         sys.exit(1)
     
     archivo_clases = "clases.txt"
-    param1 = sys.argv[1]
-    param2 = sys.argv[2]
-    archivo_salida = sys.argv[3]
+    #param1 = sys.argv[1]
+    param2 = sys.argv[1]
+    archivo_salida = sys.argv[2]
     
-    ejecutar_clases(archivo_clases, param1, param2, archivo_salida)
+    ejecutar_clases(archivo_clases, param2, archivo_salida)#param1, param2, archivo_salida)
