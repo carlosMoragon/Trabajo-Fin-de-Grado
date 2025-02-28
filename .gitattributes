@@ -1,5 +1,5 @@
 data/RepoRT_classified_CCinformation.zip filter=lfs diff=lfs merge=lfs -text
 *.tsv filter=lfs diff=lfs merge=lfs -text
 data/RepoRT_classified_CCinformation.tsv filter=lfs diff=lfs merge=lfs -text
-data/dataset_preprocesado_csv.csv filter=lfs diff=lfs merge=lfs -text
-data/dataset_preprocesado.xlsx filter=lfs diff=lfs merge=lfs -text
+data/dataset_preprocesado_csv.zip filter=lfs diff=lfs merge=lfs -text
+data/dataset_preprocesado.zip filter=lfs diff=lfs merge=lfs -text
