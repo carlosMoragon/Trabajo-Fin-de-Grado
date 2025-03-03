@@ -4,7 +4,7 @@ import csv
 import re
 
 def extraer_datos(linea):
-    match = re.match(r"(.*?), Config\(eluyente1=(.*?), eluyente2=(.*?), columna=Column\(name=(.*?), usp_code=(.*?), length=(.*?), particle_size=(.*?), temperature=(.*?), flowrate=(.*?), t0=(.*?)\)\), (.*?)$", linea)#id=(.*?), particle_size=(.*?), temperature=(.*?), flowrate=(.*?), t0=(.*?)\)\), (.*?)$", linea)
+    match = re.match(r"(.*?), Config\(eluyente1=(.*?), eluyente2=(.*?), ph1=(.*?), ph2=(.*?), columna=Column\(name=(.*?), usp_code=(.*?), length=(.*?), particle_size=(.*?), temperature=(.*?), flowrate=(.*?), t0=(.*?)\)\), (.*?)$", linea)#id=(.*?), particle_size=(.*?), temperature=(.*?), flowrate=(.*?), t0=(.*?)\)\), (.*?)$", linea)
     if match:
         return list(match.groups())
     return None
@@ -30,7 +30,7 @@ def ejecutar_clases(archivo_clases, param2, archivo_salida):#param1, param2, arc
         # Abrir el archivo de salida en modo escritura
         with open(archivo_salida, 'w', encoding='utf-8', newline='') as output:
             writer = csv.writer(output)
-            writer.writerow(["Clase", "Eluyente1", "Eluyente2", "Columna", "USP Code", "Length", "Particle Size", "Temperature", "Flowrate", "T0", "Score"])
+            writer.writerow(["Clase", "Eluyente1", "Eluyente2", "ph1", "ph2", "Columna", "USP Code", "Length", "Particle Size", "Temperature", "Flowrate", "T0", "Score"])
 
             # Iterar sobre todas las clases leídas
             for clase in clases:

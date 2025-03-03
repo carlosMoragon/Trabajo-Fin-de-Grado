@@ -26,17 +26,18 @@ def create_config_objects(dataset):
             t0=row['column.t0']
         )
 
-        eluyente1 = next((key for key in dataset.columns if key.startswith('eluent.1.') and row[key] == 100), None)
-        eluyente2 = next((key for key in dataset.columns if key.startswith('eluent.2.') and row[key] == 100), None)
-
-        ph1 = row.get('eluent.1.pH 0', (0,))
-        ph2 = row.get('eluent.2.pH 0', (0,))
+        #ph1 = row.get('eluent.1.pH 0', 0)
+        #ph2 = row.get('eluent.2.pH 0', 0)
+        
+        ph1 = row.get(next((key for key in dataset.columns if key.startswith('eluent.1.pH ') and row[key] != 0), None), 0)
+        ph2 = row.get(next((key for key in dataset.columns if key.startswith('eluent.2.pH ') and row[key] != 0), None), 0)
 
         ph1 = float(ph1)
         ph2 = float(ph2)
 
 
-
+        eluyente1 = next((key for key in dataset.columns if key.startswith('eluent.1.') and row[key] != 0), None)
+        eluyente2 = next((key for key in dataset.columns if key.startswith('eluent.2.') and row[key] != 0), None)
 
         config = Config(eluyente1=eluyente1, eluyente2=eluyente2, ph1=ph1, ph2=ph2, columna=columna)
         config_objects.add(config)
