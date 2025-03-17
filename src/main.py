@@ -1,5 +1,5 @@
 from core.data_processing import cargar_dataset, preprocesar_dataset, to_Excel
-from core.feature_extraction import get_types_of_experiments, get_family_name, filter_rt_ltn_t0
+from core.feature_extraction import get_types_of_experiments, get_family_name, filter_rt_ltn_t0, calcular_gradiente
 from core.calculations import fscore_mejor_caso, fscore_peor_caso, fscore_caso_medio, best_config
 from core.processing import process_experiments, calculate_results, build_results_list, calcular_resultados_confiables
 
@@ -34,6 +34,8 @@ def main():
 
     dataset = cargar_dataset(config.DATA_PATH, config.TSV_NAME)
     dataset = preprocesar_dataset(dataset)
+
+    dataset = calcular_gradiente(dataset)
 
     family = args.family
     types_of_experiments = get_types_of_experiments(dataset)

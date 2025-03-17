@@ -2,9 +2,10 @@ import subprocess
 import sys
 import csv
 import re
+import pandas as pd
 
 def extraer_datos(linea):
-    match = re.match(r"(.*?), Config\(eluyente1=(.*?), eluyente2=(.*?), ph1=(.*?), ph2=(.*?), columna=Column\(name=(.*?), usp_code=(.*?), length=(.*?), particle_size=(.*?), temperature=(.*?), flowrate=(.*?), t0=(.*?)\)\), (.*?)$", linea)#id=(.*?), particle_size=(.*?), temperature=(.*?), flowrate=(.*?), t0=(.*?)\)\), (.*?)$", linea)
+    match = re.match(r"(.*?), Config\(eluyente1=(.*?), eluyente2=(.*?), ph1=(.*?), ph2=(.*?), gradiente=(.*?), columna=Column\(name=(.*?), usp_code=(.*?), length=(.*?), particle_size=(.*?), temperature=(.*?), flowrate=(.*?), t0=(.*?)\)\), (.*?)$", linea)#id=(.*?), particle_size=(.*?), temperature=(.*?), flowrate=(.*?), t0=(.*?)\)\), (.*?)$", linea)
     if match:
         return list(match.groups())
     return None
@@ -25,12 +26,15 @@ def leer_clases_desde_archivo(archivo):
 def ejecutar_clases(archivo_clases, param2, archivo_salida):#param1, param2, archivo_salida):
     try:
         clases = leer_clases_desde_archivo(archivo_clases)
+
+        #clases = pd.read_csv(archivo_clases)["clases"]
+        
         print(f"Clases leídas: {clases}")  # Mensaje de depuración para verificar que se leen todas las clases
         
         # Abrir el archivo de salida en modo escritura
         with open(archivo_salida, 'w', encoding='utf-8', newline='') as output:
             writer = csv.writer(output)
-            writer.writerow(["Clase", "Eluyente1", "Eluyente2", "ph1", "ph2", "Columna", "USP Code", "Length", "Particle Size", "Temperature", "Flowrate", "T0", "Score"])
+            writer.writerow(["Clase", "Eluyente1", "Eluyente2", "ph1", "ph2", "gradiente", "Columna", "USP Code", "Length", "Particle Size", "Temperature", "Flowrate", "T0", "Score"])
 
             # Iterar sobre todas las clases leídas
             for clase in clases:
@@ -63,10 +67,10 @@ def ejecutar_clases(archivo_clases, param2, archivo_salida):#param1, param2, arc
 
 if __name__ == "__main__":
     if len(sys.argv) != 3: #4:
-        print("Uso: python script.py <param1> <param2> <archivo_salida>")
+        print("Uso: python script.py <param1> <archivo_salida>")
         sys.exit(1)
     
-    archivo_clases = "clases.txt"
+    archivo_clases = "clases_de_interes.csv"#"clases.txt"
     #param1 = sys.argv[1]
     param2 = sys.argv[1]
     archivo_salida = sys.argv[2]

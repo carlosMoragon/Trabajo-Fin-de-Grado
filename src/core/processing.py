@@ -34,12 +34,17 @@ def create_config_objects(dataset):
 
         ph1 = float(ph1)
         ph2 = float(ph2)
+        
+        eluyente_1_gradiente = row.get('eluyente_1_gradiente', 0)
+        eluyente_2_gradiente = row.get('eluyente_2_gradiente', 0)
+        t_gradiente = row.get('t_gradiente', 0)
 
+        #gradiente = row.get('gradiente', 0)
 
         eluyente1 = next((key for key in dataset.columns if key.startswith('eluent.1.') and row[key] != 0), None)
         eluyente2 = next((key for key in dataset.columns if key.startswith('eluent.2.') and row[key] != 0), None)
 
-        config = Config(eluyente1=eluyente1, eluyente2=eluyente2, ph1=ph1, ph2=ph2, columna=columna)
+        config = Config(eluyente1=eluyente1, eluyente2=eluyente2, ph1=ph1, ph2=ph2, eluyente_1_gradiente=eluyente_1_gradiente, eluyente_2_gradiente=eluyente_2_gradiente, t_gradiente=t_gradiente, columna=columna)#gradiente, columna=columna)
         config_objects.add(config)
 
     return list(config_objects)
@@ -96,6 +101,7 @@ def calculate_results(result_datasets, is_alpha):
             resultados.append(calculate_alpha_results(dataset))
         else:
             resultados.append(calculate_diff_results(dataset))
+        
     return resultados
 
 
@@ -128,8 +134,12 @@ def calcular_resultados_confiables(result_datasets, is_alpha, max_datos):
         else:
             resultados = calculate_diff_results(dataset)
 
+
+        # Contar cuántos valores son negativos antes de corregirlos
+        negativos = sum(1 for r in resultados if r < 0)
+        #print(f"Cantidad de valores negativos antes de corregir: {negativos}")
         # Asegurar que los valores negativos de alpha/diff no arruinen el cálculo
-        resultados = [max(0, r) for r in resultados]  # Eliminar valores negativos
+        #resultados = [max(0, r) for r in resultados]  # Eliminar valores negativos
         
         # Calcular el score promedio
         score_promedio = sum(resultados) / len(resultados) if resultados else 0

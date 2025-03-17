@@ -10,6 +10,7 @@ def cargar_dataset(ruta_zip, nombre_tsv):
 def preprocesar_dataset(dataset):
     dataset['name'] = dataset['name'].astype('str')
     dataset['comment'] = dataset['comment'].astype('str')
+    dataset = dataset[dataset['rt'] > dataset['column.t0']]
     return dataset
 
 def to_Excel(datasets, path="../../tmp/excel.xlsx"):
