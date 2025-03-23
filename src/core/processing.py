@@ -2,6 +2,20 @@ from models.models import Column, Config
 from core.feature_extraction import filter_by_family, get_posible_families, filter_by_config
 from core.calculations import alpha, diff
 
+def normalizar_datos(lista_tuplas):
+    if not lista_tuplas:
+        return []
+
+    n_max = max(score for _, score in lista_tuplas)
+
+    if n_max == 0:
+        return [(config, 0) for config, _ in lista_tuplas]
+
+    lista_normalizada = [(config, score / n_max) for config, score in lista_tuplas]
+
+    return lista_normalizada
+    
+
 def create_config_objects(dataset):
     def get_uspcode(row):
         usp_columns = [

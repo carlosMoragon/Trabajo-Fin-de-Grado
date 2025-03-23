@@ -1,7 +1,7 @@
 from core.data_processing import cargar_dataset, preprocesar_dataset, to_Excel
 from core.feature_extraction import get_types_of_experiments, get_family_name, filter_rt_ltn_t0, calcular_gradiente
 from core.calculations import fscore_mejor_caso, fscore_peor_caso, fscore_caso_medio, best_config
-from core.processing import process_experiments, calculate_results, build_results_list, calcular_resultados_confiables
+from core.processing import process_experiments, calculate_results, build_results_list, calcular_resultados_confiables, normalizar_datos
 
 import config
 import argparse
@@ -44,16 +44,27 @@ def main():
     result_datasets, configs = process_experiments(dataset, types_of_experiments, family_name, family)
 
     # Encontrar el máximo número de datos entre todas las configuraciones
-    max_datos = max([len(d) for d in result_datasets])
+    n_datos = [len(d) for d in result_datasets]
+    max_datos = max(n_datos)
 
     # Calcular los resultados ponderados por confianza
     resultados_confiables = calcular_resultados_confiables(result_datasets, is_alpha, max_datos)
 
+    
     # Construir la lista de resultados finales con los scores ponderados
     lista_tuplas = build_results_list(configs, resultados_confiables)#, fscore)
+    
+    lista_tuplas_normalizadas = normalizar_datos(lista_tuplas)
 
-    for tupla in lista_tuplas:
-        print(f'{family}, {tupla[0]}, {tupla[1]}')#, Score Promedio: {tupla[1]}, Confianza: {tupla[2]}, Score Final: {tupla[3]}\n')
+    i=0
+    for tupla in lista_tuplas_normalizadas:
+        if i < 10:
+            print(f'{family}, {tupla[0]}, {tupla[1]}, {n_datos[i]}')
+            i += 1
+        else:
+            break
+    #for tupla in lista_tuplas_normalizadas:
+    #    print(f'{family}, {tupla[0]}, {tupla[1]}')#, Score Promedio: {tupla[1]}, Confianza: {tupla[2]}, Score Final: {tupla[3]}\n')
 
 
 if __name__ == "__main__":

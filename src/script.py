@@ -10,7 +10,7 @@ def extraer_datos(linea):
     # Aquí asumo que los datos de la salida están en el formato adecuado
     # Cambia la expresión regular si el formato de la salida varía
     #match = re.match(r"(.*?), Config\(eluyente1=(.*?), eluyente2=(.*?), ph1=(.*?), ph2=(.*?), gradiente=(.*?), columna=Column\(name=(.*?), usp_code=(.*?), length=(.*?), particle_size=(.*?), temperature=(.*?), flowrate=(.*?), t0=(.*?)\)\), (.*?)$", linea)
-    match = re.match(r"(.*?), Config\(eluyente1=(.*?), eluyente2=(.*?), ph1=(.*?), ph2=(.*?), eluyente_1_gradiente=\[(.*?)\], eluyente_2_gradiente=\[(.*?)\], t_gradiente=\[(.*?)\], columna=Column\(name=(.*?), usp_code=(.*?), length=(.*?), particle_size=(.*?), temperature=(.*?), flowrate=(.*?), t0=(.*?)\)\), (.*?)$", linea)
+    match = re.match(r"(.*?), Config\(eluyente1=(.*?), eluyente2=(.*?), ph1=(.*?), ph2=(.*?), eluyente_1_gradiente=\[(.*?)\], eluyente_2_gradiente=\[(.*?)\], t_gradiente=\[(.*?)\], columna=Column\(name=(.*?), usp_code=(.*?), length=(.*?), particle_size=(.*?), temperature=(.*?), flowrate=(.*?), t0=(.*?)\)\), (.*?), (.?)$", linea)
     if match:
         return list(match.groups())
     return None
@@ -33,7 +33,7 @@ def ejecutar_clases(archivo_clases, param2, archivo_salida):
             writer = csv.writer(output)
             # Escribimos el encabezado del CSV de salida
             #writer.writerow(["Clase", "Eluyente1", "Eluyente2", "ph1", "ph2", "Gradiente", "Columna", "USP Code", "Length", "Particle Size", "Temperature", "Flowrate", "T0", "Score"])
-            writer.writerow(["Clase", "Eluyente1", "Eluyente2", "pH1", "pH2", "Eluyente1 Gradiente", "Eluyente2 Gradiente", "T Gradiente", "Columna Nombre", "USP Code", "Longitud", "Tamaño de Partícula", "Temperatura", "Flujo", "T0", "Score"])
+            writer.writerow(["Clase", "Eluyente1", "Eluyente2", "pH1", "pH2", "Eluyente1 Gradiente", "Eluyente2 Gradiente", "T Gradiente", "Columna Nombre", "USP Code", "Longitud", "Tamaño de Partícula", "Temperatura", "Flujo", "T0", "Score", "n_datos"])
 
 
             # Iteramos sobre las clases leídas
