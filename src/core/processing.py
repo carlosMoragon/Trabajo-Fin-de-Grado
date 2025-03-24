@@ -148,24 +148,70 @@ def calcular_resultados_confiables(result_datasets, is_alpha, max_datos):
         else:
             resultados = calculate_diff_results(dataset)
 
-
-        # Contar cuántos valores son negativos antes de corregirlos
+            # Contar cuántos valores son negativos antes de corregirlos
         negativos = sum(1 for r in resultados if r < 0)
         #print(f"Cantidad de valores negativos antes de corregir: {negativos}")
-        # Asegurar que los valores negativos de alpha/diff no arruinen el cálculo
-        #resultados = [max(0, r) for r in resultados]  # Eliminar valores negativos
-        
-        # Calcular el score promedio
+            # Asegurar que los valores negativos de alpha/diff no arruinen el cálculo
+            #resultados = [max(0, r) for r in resultados]  # Eliminar valores negativos
+            
+            # Calcular el score promedio
         score_promedio = sum(resultados) / len(resultados) if resultados else 0
 
-        # Ponderar el score con la confianza y evitar negativos
+            # Ponderar el score con la confianza y evitar negativos
         score_final = max(0, score_promedio * confianza)
 
-        # Guardar el resultado final
+            #print(f"nº dataset: {n_datos}, max_datos: {max_datos}, confianza: {confianza}, score_promedio score: {score_final}")
+
+            # Guardar el resultado final
         resultados_finales.append((score_promedio, confianza, score_final))
 
     return resultados_finales
 
+def calcular_resultados_confiables_gth(result_datasets, is_alpha):
+    """
+    Calcula los resultados de las configuraciones y los pondera con la confianza
+    calculada en función del tamaño de los datos.
+
+    :param result_datasets: Lista de datasets por configuración
+    :param is_alpha: True para calcular alpha, False para calcular diff
+    :param max_datos: Número máximo de datos entre todas las configuraciones
+    :return: Lista de resultados ponderados por la confianza
+    """
+    resultados_finales = []
+    max_datos = max([len(d) for d in result_datasets])
+
+    for dataset in result_datasets:
+        if dataset.empty:
+            continue
+
+        # Obtener la cantidad de datos de esta configuración
+        n_datos = len(dataset)
+
+            # Calcular la confianza
+        confianza = calcular_confianza(n_datos, max_datos)
+
+            # Calcular los resultados (alpha o diff)
+        if is_alpha:
+            resultados = calculate_alpha_results(dataset)
+        else:
+            resultados = calculate_diff_results(dataset)
+
+            #print(f"Cantidad de valores negativos antes de corregir: {negativos}")
+            # Asegurar que los valores negativos de alpha/diff no arruinen el cálculo
+            #resultados = [max(0, r) for r in resultados]  # Eliminar valores negativos
+            
+            # Calcular el score promedio
+        score_promedio = sum(resultados) / len(resultados) if resultados else 0
+
+            # Ponderar el score con la confianza y evitar negativos
+        score_final = max(0, score_promedio * confianza)
+
+            #print(f"nº dataset: {n_datos}, max_datos: {max_datos}, confianza: {confianza}, score_promedio score: {score_final}")
+
+            # Guardar el resultado final
+        resultados_finales.append((score_promedio, confianza, score_final))
+
+    return resultados_finales
 
 def calcular_confianza(n_datos, max_datos):
     """
