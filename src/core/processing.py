@@ -63,6 +63,27 @@ def create_config_objects(dataset):
 
     return list(config_objects)
 
+def process_experiments_ownMethodScore(data, experiments):
+    result_datasets = []
+    configs = []  # Lista de configuraciones
+    posible_families = []
+    families_exp = []
+    for exp in experiments:
+        experiment_data = data[data['experiment'] == exp]
+        families = get_posible_families(experiment_data)
+            
+        # Creamos un objeto configuración y lo añadimos a una lista
+        exp_configs = create_config_objects(experiment_data)
+        configs.extend(exp_configs)
+            
+        datasets_by_config = [filter_by_config(experiment_data, config) for config in exp_configs]
+        result_datasets.extend(datasets_by_config)
+        families_exp.append(families)
+        posible_families.append(families_exp)
+        families_exp.clear()
+        
+    return result_datasets, configs, posible_families
+
 # Dada los tipos de experimentos separa
 def process_experiments(data, experiments, family_name, family):
     result_datasets = []
