@@ -1,0 +1,307 @@
+openapi: 3.0.0
+info:
+  title: Servicio de Predicción y Evaluación de Configuraciones
+  description: API para predecir, evaluar y recomendar configuraciones de separación de familias de metabolitos.
+  version: 1.0.0
+
+paths:
+  /predict:
+    post:
+      summary: Predice la mejor configuración para separar una familia de metabolitos.
+      description: Recibe una familia de metabolitos y devuelve una configuración adecuada.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                family:
+                  type: string
+                  description: Nombre de la familia de metabolitos.
+      responses:
+        '200':
+          description: Configuración predicha correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  configuration:
+                    type: object
+                    properties:
+                      eluyente1:
+                        type: string
+                      eluyente2:
+                        type: string
+                      ph1:
+                        type: number
+                        format: float
+                      ph2:
+                        type: number
+                        format: float
+                      eluyente_1_gradiente:
+                        type: array
+                        items:
+                          type: number
+                      eluyente_2_gradiente:
+                        type: array
+                        items:
+                          type: number
+                      t_gradiente:
+                        type: array
+                        items:
+                          type: number
+                      columna:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          usp_code:
+                            type: string
+                          length:
+                            type: number
+                          particle_size:
+                            type: number
+                          temperature:
+                            type: number
+                          flowrate:
+                            type: number
+                          t0:
+                            type: number
+        '400':
+          description: Solicitud mal formada, falta el campo "family" o es incorrecto.
+        '404':
+          description: Familia de metabolitos no encontrada.
+  /evaluate:
+    post:
+      summary: Evalúa qué tan buena es una configuración para una familia de metabolitos.
+      description: Recibe una familia y una configuración, y devuelve un número que indica la calidad de la configuración.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                family:
+                  type: string
+                configuration:
+                  type: object
+                  properties:
+                    eluyente1:
+                      type: string
+                    eluyente2:
+                      type: string
+                    ph1:
+                      type: number
+                      format: float
+                    ph2:
+                      type: number
+                      format: float
+                    eluyente_1_gradiente:
+                      type: array
+                      items:
+                        type: number
+                    eluyente_2_gradiente:
+                      type: array
+                      items:
+                        type: number
+                    t_gradiente:
+                      type: array
+                      items:
+                        type: number
+                    columna:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        usp_code:
+                          type: string
+                        length:
+                          type: number
+                        particle_size:
+                          type: number
+                        temperature:
+                          type: number
+                        flowrate:
+                          type: number
+                        t0:
+                          type: number
+      responses:
+        '200':
+          description: Evaluación completada correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  score:
+                    type: number
+                    format: float
+        '400':
+          description: Solicitud mal formada, falta "family" o "configuration".
+        '404':
+          description: Familia de metabolitos no encontrada.
+  /families:
+    get:
+      summary: Obtiene un listado de las familias de metabolitos.
+      description: Devuelve una lista de las familias de metabolitos disponibles.
+      responses:
+        '200':
+          description: Listado de familias de metabolitos.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '404':
+          description: No se encontraron familias de metabolitos disponibles.
+  /experiments:
+    post:
+      summary: Añade información sobre un experimento a la base de datos.
+      description: Recibe información esencial sobre un experimento y lo almacena en la base de datos.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name_metabolito:
+                  type: string
+                formula:
+                  type: string
+                rt:
+                  type: number
+                  format: float
+                smiles_std:
+                  type: string
+                inchi_std:
+                  type: string
+                inchikey_std:
+                  type: string
+                classyfire:
+                  type: object
+                  properties:
+                    kingdom:
+                      type: string
+                    superclass:
+                      type: string
+                    class:
+                      type: string
+                    subclass:
+                      type: string
+                    level5:
+                      type: string
+                    level6:
+                      type: string
+                comment:
+                  type: string
+                alternative_parents:
+                  type: string
+                column:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    usp_code:
+                      type: string
+                    length:
+                      type: number
+                    particle_size:
+                      type: number
+                    temperature:
+                      type: number
+                    flowrate:
+                      type: number
+                    t0:
+                      type: number
+                gradiente:
+                  type: object
+                  properties:
+                    eluyente1:
+                      type: string
+                    eluyente2:
+                      type: string
+                    t_gradiente:
+                      type: array
+                      items:
+                        type: number
+                    ph1:
+                      type: number
+                    ph2:
+                      type: number
+      responses:
+        '200':
+          description: Información del experimento añadida correctamente.
+        '400':
+          description: Solicitud mal formada, falta uno o más campos esenciales.
+  /recommend-family:
+    post:
+      summary: Recomienda la familia de metabolitos más adecuada para una configuración dada.
+      description: Envía una configuración y recibe el nombre de la familia recomendada.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                configuration:
+                  type: object
+                  properties:
+                    eluyente1:
+                      type: string
+                    eluyente2:
+                      type: string
+                    ph1:
+                      type: number
+                      format: float
+                    ph2:
+                      type: number
+                      format: float
+                    eluyente_1_gradiente:
+                      type: array
+                      items:
+                        type: number
+                    eluyente_2_gradiente:
+                      type: array
+                      items:
+                        type: number
+                    t_gradiente:
+                      type: array
+                      items:
+                        type: number
+                    columna:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        usp_code:
+                          type: string
+                        length:
+                          type: number
+                        particle_size:
+                          type: number
+                        temperature:
+                          type: number
+                        flowrate:
+                          type: number
+                        t0:
+                          type: number
+      responses:
+        '200':
+          description: Familia recomendada correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  family:
+                    type: string
+        '400':
+          description: Solicitud mal formada, falta el campo "configuration".
+        '404':
+          description: No se encontró una familia adecuada para la configuración proporcionada.
