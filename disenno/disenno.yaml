@@ -1,14 +1,15 @@
 openapi: 3.0.0
 info:
-  title: Servicio de Predicción y Evaluación de Configuraciones
-  description: API para predecir, evaluar y recomendar configuraciones de separación de familias de metabolitos.
+  title: Metabolite API
+  description: API for metabolite family configuration, evaluation, and recommendations.
   version: 1.0.0
-
+servers:
+  - url: "http://localhost:8000/api"
 paths:
   /predict:
     post:
-      summary: Predice la mejor configuración para separar una familia de metabolitos.
-      description: Recibe una familia de metabolitos y devuelve una configuración adecuada.
+      summary: Predicts the best configuration for separating a metabolite family.
+      description: Receives a metabolite family and returns an optimal configuration.
       requestBody:
         required: true
         content:
@@ -18,10 +19,12 @@ paths:
               properties:
                 family:
                   type: string
-                  description: Nombre de la familia de metabolitos.
+                  description: The name of the metabolite family.
+              required:
+                - family
       responses:
-        '200':
-          description: Configuración predicha correctamente.
+        200:
+          description: Configuration predicted successfully.
           content:
             application/json:
               schema:
@@ -44,14 +47,17 @@ paths:
                         type: array
                         items:
                           type: number
+                          format: float
                       eluyente_2_gradiente:
                         type: array
                         items:
                           type: number
+                          format: float
                       t_gradiente:
                         type: array
                         items:
                           type: number
+                          format: float
                       columna:
                         type: object
                         properties:
@@ -69,14 +75,15 @@ paths:
                             type: number
                           t0:
                             type: number
-        '400':
-          description: Solicitud mal formada, falta el campo "family" o es incorrecto.
-        '404':
-          description: Familia de metabolitos no encontrada.
-  /evaluate:
+        400:
+          description: Bad request, missing "family" field or incorrect family.
+        404:
+          description: Metabolite family not found.
+          
+  /evaluate/alpha:
     post:
-      summary: Evalúa qué tan buena es una configuración para una familia de metabolitos.
-      description: Recibe una familia y una configuración, y devuelve un número que indica la calidad de la configuración.
+      summary: Evaluates the "alpha" score of a configuration for a metabolite family.
+      description: Receives a family and a configuration and returns the alpha score.
       requestBody:
         required: true
         content:
@@ -86,6 +93,7 @@ paths:
               properties:
                 family:
                   type: string
+                  description: The name of the metabolite family.
                 configuration:
                   type: object
                   properties:
@@ -103,14 +111,17 @@ paths:
                       type: array
                       items:
                         type: number
+                        format: float
                     eluyente_2_gradiente:
                       type: array
                       items:
                         type: number
+                        format: float
                     t_gradiente:
                       type: array
                       items:
                         type: number
+                        format: float
                     columna:
                       type: object
                       properties:
@@ -129,39 +140,115 @@ paths:
                         t0:
                           type: number
       responses:
-        '200':
-          description: Evaluación completada correctamente.
+        200:
+          description: Alpha score evaluation completed successfully.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  score:
+                  alpha_score:
                     type: number
                     format: float
-        '400':
-          description: Solicitud mal formada, falta "family" o "configuration".
-        '404':
-          description: Familia de metabolitos no encontrada.
+        400:
+          description: Bad request, missing "family" or "configuration".
+        404:
+          description: Metabolite family not found.
+          
+  /evaluate/diff:
+    post:
+      summary: Evaluates the "diff" score of a configuration for a metabolite family.
+      description: Receives a family and a configuration and returns the diff score.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                family:
+                  type: string
+                  description: The name of the metabolite family.
+                configuration:
+                  type: object
+                  properties:
+                    eluyente1:
+                      type: string
+                    eluyente2:
+                      type: string
+                    ph1:
+                      type: number
+                      format: float
+                    ph2:
+                      type: number
+                      format: float
+                    eluyente_1_gradiente:
+                      type: array
+                      items:
+                        type: number
+                        format: float
+                    eluyente_2_gradiente:
+                      type: array
+                      items:
+                        type: number
+                        format: float
+                    t_gradiente:
+                      type: array
+                      items:
+                        type: number
+                        format: float
+                    columna:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        usp_code:
+                          type: string
+                        length:
+                          type: number
+                        particle_size:
+                          type: number
+                        temperature:
+                          type: number
+                        flowrate:
+                          type: number
+                        t0:
+                          type: number
+      responses:
+        200:
+          description: Diff score evaluation completed successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  diff_score:
+                    type: number
+                    format: float
+        400:
+          description: Bad request, missing "family" or "configuration".
+        404:
+          description: Metabolite family not found.
+          
   /families:
     get:
-      summary: Obtiene un listado de las familias de metabolitos.
-      description: Devuelve una lista de las familias de metabolitos disponibles.
+      summary: Gets a list of metabolite families that we work with.
       responses:
-        '200':
-          description: Listado de familias de metabolitos.
+        200:
+          description: List of metabolite families retrieved successfully.
           content:
             application/json:
               schema:
                 type: array
                 items:
                   type: string
-        '404':
-          description: No se encontraron familias de metabolitos disponibles.
+        404:
+          description: No metabolite families found.
+          
   /experiments:
     post:
-      summary: Añade información sobre un experimento a la base de datos.
-      description: Recibe información esencial sobre un experimento y lo almacena en la base de datos.
+      summary: Adds information about an experiment to the database.
+      description: Adds a new experiment to the database with the provided metabolite and column information.
       requestBody:
         required: true
         content:
@@ -231,17 +318,20 @@ paths:
                         type: number
                     ph1:
                       type: number
+                      format: float
                     ph2:
                       type: number
+                      format: float
       responses:
-        '200':
-          description: Información del experimento añadida correctamente.
-        '400':
-          description: Solicitud mal formada, falta uno o más campos esenciales.
+        200:
+          description: Experiment information added successfully.
+        400:
+          description: Bad request, missing one or more essential fields.
+          
   /recommend-family:
     post:
-      summary: Recomienda la familia de metabolitos más adecuada para una configuración dada.
-      description: Envía una configuración y recibe el nombre de la familia recomendada.
+      summary: Recommends the most suitable metabolite family for a given configuration.
+      description: Receives a configuration and recommends the most suitable metabolite family.
       requestBody:
         required: true
         content:
@@ -266,14 +356,17 @@ paths:
                       type: array
                       items:
                         type: number
+                        format: float
                     eluyente_2_gradiente:
                       type: array
                       items:
                         type: number
+                        format: float
                     t_gradiente:
                       type: array
                       items:
                         type: number
+                        format: float
                     columna:
                       type: object
                       properties:
@@ -292,8 +385,8 @@ paths:
                         t0:
                           type: number
       responses:
-        '200':
-          description: Familia recomendada correctamente.
+        200:
+          description: Family recommended successfully.
           content:
             application/json:
               schema:
@@ -301,7 +394,7 @@ paths:
                 properties:
                   family:
                     type: string
-        '400':
-          description: Solicitud mal formada, falta el campo "configuration".
-        '404':
-          description: No se encontró una familia adecuada para la configuración proporcionada.
+        400:
+          description: Bad request, missing "configuration" field.
+        404:
+          description: No suitable family found for the given configuration.
