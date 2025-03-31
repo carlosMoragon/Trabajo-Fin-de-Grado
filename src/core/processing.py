@@ -2,6 +2,9 @@ from models.models import Column, Config
 from core.feature_extraction import filter_by_family, get_posible_families, filter_by_config
 from core.calculations import alpha, diff
 
+import math
+import ast
+
 def normalizar_datos(lista_tuplas):
     if not lista_tuplas:
         return []
@@ -71,16 +74,16 @@ def process_experiments_ownMethodScore(data, experiments):
     for exp in experiments:
         experiment_data = data[data['experiment'] == exp]
         families = get_posible_families(experiment_data)
-            
         # Creamos un objeto configuración y lo añadimos a una lista
         exp_configs = create_config_objects(experiment_data)
         configs.extend(exp_configs)
             
         datasets_by_config = [filter_by_config(experiment_data, config) for config in exp_configs]
+        for df in datasets_by_config:
+            df["families"] = get_posible_families(df) 
         result_datasets.extend(datasets_by_config)
-        families_exp.append(families)
+        families_exp = [families]
         posible_families.append(families_exp)
-        families_exp.clear()
         
     return result_datasets, configs, posible_families
 
@@ -157,6 +160,11 @@ def calcular_resultados_confiables(result_datasets, is_alpha, max_datos):
         if dataset.empty:
             continue
 
+        duracion = max(max(times) for times in dataset["t_gradiente"])
+
+        # Obtener el máximo de la primera fila de esas columnas
+        #duracion = dataset[t_columns].iloc[0].max()
+
         # Obtener la cantidad de datos de esta configuración
         n_datos = len(dataset)
         
@@ -179,7 +187,7 @@ def calcular_resultados_confiables(result_datasets, is_alpha, max_datos):
         score_promedio = sum(resultados) / len(resultados) if resultados else 0
 
             # Ponderar el score con la confianza y evitar negativos
-        score_final = max(0, score_promedio * confianza)
+        score_final = max(0, score_promedio * confianza * math.exp(-duracion))
 
             #print(f"nº dataset: {n_datos}, max_datos: {max_datos}, confianza: {confianza}, score_promedio score: {score_final}")
 
@@ -205,6 +213,12 @@ def calcular_resultados_confiables_gth(result_datasets, is_alpha):
         if dataset.empty:
             continue
 
+        # Obtener el máximo de la primera fila de esas columnas
+        #duracion = max(dataset["t_gradiente"].apply(ast.literal_eval)[0])
+        duracion = max(max(times) for times in dataset["t_gradiente"])
+        #duracion = max(dataset["t_gradiente"][0])#.iloc[0].max()
+
+        print(f"Duración: {duracion}")
         # Obtener la cantidad de datos de esta configuración
         n_datos = len(dataset)
 
@@ -225,7 +239,8 @@ def calcular_resultados_confiables_gth(result_datasets, is_alpha):
         score_promedio = sum(resultados) / len(resultados) if resultados else 0
 
             # Ponderar el score con la confianza y evitar negativos
-        score_final = max(0, score_promedio * confianza)
+        #score_final = max(0, score_promedio * confianza * math.exp(-duracion))
+        score_final = max(0, score_promedio * confianza * 1/math.sqrt(duracion))
 
             #print(f"nº dataset: {n_datos}, max_datos: {max_datos}, confianza: {confianza}, score_promedio score: {score_final}")
 

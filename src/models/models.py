@@ -13,9 +13,9 @@ class Column:
         if not isinstance(value, Column):
             return False
         return (
-            self.name == value.name and
+            #self.name == value.name and
             self.usp_code == value.usp_code and
-            self.length == value.length and
+            #self.length == value.length and
             #self.id == value.id and
             self.particle_size == value.particle_size and
             self.temperature == value.temperature and
@@ -25,9 +25,9 @@ class Column:
     
     def __hash__(self):
         return hash((
-            self.name,
+            #self.name,
             self.usp_code,
-            self.length,
+            #self.length,
             #self.id,
             self.particle_size,
             self.temperature,

@@ -1,4 +1,4 @@
-from core.data_processing import cargar_dataset, preprocesar_dataset
+from core.data_processing import cargar_dataset, preprocesar_dataset, to_Excel
 from core.feature_extraction import get_types_of_experiments, get_family_name, calcular_gradiente
 from core.processing import build_results_list,normalizar_datos, calcular_resultados_confiables_gth, process_experiments_ownMethodScore
 
@@ -28,15 +28,38 @@ def main():
     family_name = get_family_name(family)
 
     result_datasets, configs, posible_families = process_experiments_ownMethodScore(dataset, types_of_experiments)
-    print(f"length df: {len(result_datasets)}")
-    print(f"length configs: {len(configs)}")
-    print(f"length posible_families: {len(posible_families)}")
+    #print(f"length df: {len(result_datasets)}")
+    #print(f"length configs: {len(configs)}")
+    #print(f"length posible_families: {len(posible_families)}")
 
+    #print(f"length df: {len(result_datasets[0])}")
+    #print(f"length posible_families: {len(posible_families[0])}")
+    print(posible_families[0])
     for i, df in enumerate(result_datasets):
+        configuration = configs[i]
+        # df: es el dataframe de la configuration
+        #list_families = list(set([[[clase for clase in family] for family in families] for families in posible_families]))
         
+        #resultados_confiables = calcular_resultados_ownMethodScore(df, posible_families[i], list_families, is_alpha)
+        #print(posible_families[i])
+        # Aplanar la lista de listas de listas
+        #lista_filtros = list(set(clase for families in posible_families for family in families for clase in family))
+        
+        lista_filtros = list(set(tuple(clase) if isinstance(clase, set) else clase 
+                         for families in posible_families 
+                         for family in families 
+                         for clase in family))
+        #datasets_filtrados = {filtro: df[df["families"].str.contains(filtro, na=False)] for filtro in lista_filtros}
+        #datasets_filtrados
+    
+    
+    to_Excel(datasets=result_datasets, path=f"../tmp/borrar/excel{i}.xlsx")
 
-        #print(configs[i])
-    #    print(posible_families[0])
+def calcular_resultados_ownMethodScore(df, families, list_families, is_alpha):
+    pass
+    
+
 
 if __name__ == "__main__":
     main()
+

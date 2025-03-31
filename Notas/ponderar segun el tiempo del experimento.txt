@@ -1,0 +1,9 @@
+Opciones:
+
+* Penalización exponencial
+Si quieres que los métodos más lentos sean penalizados más agresivamente:
+
+𝛼′=𝛼⋅𝑒−𝑇
+
+* Penalización con raíz cuadrada
+𝛼′=𝛼/sqrt(𝑇)

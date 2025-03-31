@@ -72,12 +72,13 @@ def main():
 
     i=0
     for tupla in lista_tuplas_normalizadas:
-        #if i < 10:
+        if i < 10:
         #if n_datos[i] > 4:
-        print(f'{family}, {tupla[0]}, {tupla[1]}, {n_datos[i]}')
+            print(f'{family}, {tupla[0]}, {tupla[1]}, {n_datos[i]}')
+        else:
+            break
+
         i += 1
-        # else:
-            # break
     #for tupla in lista_tuplas_normalizadas:
     #    print(f'{family}, {tupla[0]}, {tupla[1]}')#, Score Promedio: {tupla[1]}, Confianza: {tupla[2]}, Score Final: {tupla[3]}\n')
 
