@@ -18,7 +18,8 @@ def extraer_datos(linea):
 # Leer el archivo de clases
 def leer_clases_desde_archivo(archivo):
     # Utilizamos pandas para leer el archivo csv
-    df = pd.read_csv(archivo, header=None)  # Leemos el CSV sin encabezado
+    df = pd.read_csv(archivo, sep=";", header=None)
+    #df = pd.read_csv(archivo, header=None)  # Leemos el CSV sin encabezado
     clases = df.iloc[0].dropna().tolist()  # Convertimos la fila en una lista (sin valores nulos)
     return clases
 
@@ -70,7 +71,7 @@ if __name__ == "__main__":
         print("Uso: python script.py <param2> <archivo_salida>")
         sys.exit(1)
 
-    archivo_clases = "clases_de_interes.csv"  # El archivo CSV que contiene las clases
+    archivo_clases = "Familias_csv.csv"#"clases_de_interes.csv"  # El archivo CSV que contiene las clases
     param2 = sys.argv[1]  # Parámetro que se pasará a main.py
     archivo_salida = sys.argv[2]  # Archivo donde se guardarán los resultados
 

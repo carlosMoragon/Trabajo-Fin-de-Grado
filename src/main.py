@@ -72,11 +72,11 @@ def main():
 
     i=0
     for tupla in lista_tuplas_normalizadas:
-        if i < 10:
+        #if i < 10:
         #if n_datos[i] > 4:
-            print(f'{family}, {tupla[0]}, {tupla[1]}, {n_datos[i]}')
-        else:
-            break
+        print(f'{family}, {tupla[0]}, {tupla[1]}, {n_datos[i]}')
+        #else:
+        #    break
 
         i += 1
     #for tupla in lista_tuplas_normalizadas:
