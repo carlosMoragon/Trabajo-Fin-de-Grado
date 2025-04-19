@@ -68,7 +68,9 @@ def main():
     #lista_tuplas = build_results_list(configs, resultados_confiables)#, fscore)
     lista_tuplas = build_results_list(configs_gth_5, resultados_confiables)#, fscore)
 
-    lista_tuplas_normalizadas = normalizar_datos(lista_tuplas)
+    #lista_tuplas_normalizadas = normalizar_datos(lista_tuplas)
+
+    lista_tuplas_normalizadas = lista_tuplas
 
     i=0
     for tupla in lista_tuplas_normalizadas:
