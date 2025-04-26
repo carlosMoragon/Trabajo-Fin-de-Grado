@@ -12,7 +12,7 @@ router.post('/', (req, res) => {
   // Convertimos la configuración a un string JSON para pasarlo como argumento al script
   const jsonString = JSON.stringify(config);
 
-  const pythonProcess = spawn('python', ['../../src/modelo2/predict_family.py', jsonString]);
+  const pythonProcess = spawn('python', ['../../src/modelos/predict_family_lgbm.py', jsonString]);
 
   let resultData = '';
   let responseSent = false;

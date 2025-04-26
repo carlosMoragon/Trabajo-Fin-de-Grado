@@ -1,0 +1,283 @@
+openapi: 3.0.0
+info:
+  title: Metabolite Separation API
+  version: 1.0.0
+  description: API for predicting and evaluating metabolite separation configurations.
+
+components:
+  schemas:
+    FamilyRequest:
+      type: object
+      required:
+        - family
+      properties:
+        family:
+          type: string
+          description: The metabolite family to evaluate.
+
+    Column:
+      type: object
+      description: Predicted chromatographic column configuration.
+      properties:
+        uspCode:
+          type: string
+        length:
+          type: number
+        name:
+          type: string
+        particleSize:
+          type: number
+        temperature:
+          type: number
+        flowrate:
+          type: number
+        t0:
+          type: number
+
+    GradientOption1:
+      type: object
+      properties:
+        x0: { type: number }
+        x1: { type: number }
+        x2: { type: number }
+        x3: { type: number }
+        x4: { type: number }
+        x5: { type: number }
+        x6: { type: number }
+        x7: { type: number }
+        x8: { type: number }
+        x9: { type: number }
+        x10: { type: number }
+        duration: { type: number }
+      required:
+        - x0
+        - x1
+        - x2
+        - x3
+        - x4
+        - x5
+        - x6
+        - x7
+        - x8
+        - x9
+        - x10
+        - duration
+
+    GradientOption2:
+      type: object
+      properties:
+        eluent1Gradient:
+          type: array
+          items:
+            type: number
+        eluent2Gradient:
+          type: array
+          items:
+            type: number
+        timeGradient:
+          type: array
+          items:
+            type: number
+      required:
+        - eluent1Gradient
+        - eluent2Gradient
+        - timeGradient
+
+    Gradient:
+      description: Predicted gradient configuration for separation.
+      oneOf:
+        - $ref: '#/components/schemas/GradientOption1'
+        - $ref: '#/components/schemas/GradientOption2'
+
+    Configuration:
+      type: object
+      description: Predicted configuration for separating the metabolite family.
+      properties:
+        eluent1:
+          type: string
+        eluent2:
+          type: string
+        ph1:
+          type: number
+        ph2:
+          type: number
+        column:
+          $ref: '#/components/schemas/Column'
+        gradient:
+          $ref: '#/components/schemas/Gradient'
+
+    PredictResponse:
+      type: object
+      required:
+        - family
+        - configuration
+        - score
+      properties:
+        family:
+          type: string
+          description: The metabolite family evaluated.
+        configuration:
+          $ref: '#/components/schemas/Configuration'
+        score:
+          type: number
+
+    EvaluateRequest:
+      type: object
+      required:
+        - family
+        - configuration
+      properties:
+        family:
+          type: string
+          description: The metabolite family evaluated.
+        configuration:
+          $ref: '#/components/schemas/Configuration'
+
+    EvaluateResponse:
+      type: object
+      properties:
+        score:
+          type: number
+          description: The score relative to how good the configuration separates this metabolite family.
+
+    ExperimentRequest:
+      type: object
+      properties:
+        name_metabolito:
+          type: string
+        formula:
+          type: string
+        rt:
+          type: number
+          format: float
+        smiles_std:
+          type: string
+        inchi_std:
+          type: string
+        inchikey_std:
+          type: string
+        classyfire:
+          type: object
+          properties:
+            kingdom: { type: string }
+            superclass: { type: string }
+            class: { type: string }
+            subclass: { type: string }
+            level5: { type: string }
+            level6: { type: string }
+        comment:
+          type: string
+        alternative_parents:
+          type: string
+        column:
+          type: object
+          properties:
+            name: { type: string }
+            usp_code: { type: string }
+            length: { type: integer }
+            particle_size: { type: number, format: float }
+            temperature: { type: number, format: float }
+            flowrate: { type: number, format: float }
+            t0: { type: number, format: float }
+        gradiente:
+          type: object
+          properties:
+            eluyente1: { type: string }
+            eluyente2: { type: string }
+            t_gradiente:
+              type: array
+              items:
+                type: number
+            ph1: { type: number, format: float }
+            ph2: { type: number, format: float }
+
+paths:
+  /predict:
+    post:
+      summary: Predicts the best configuration to separate a metabolite family.
+      description: Given a metabolite family, it returns the best configuration to separate them.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FamilyRequest'
+      responses:
+        '200':
+          description: Configuration predicted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PredictResponse'
+        '400':
+          description: Bad request, missing or incorrect "family" field.
+        '404':
+          description: Metabolite family not found.
+
+  /evaluate:
+    post:
+      summary: Evaluates the alpha score for a given configuration.
+      description: Evaluates how good a configuration is for a metabolite family by calculating the alpha score.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvaluateRequest'
+      responses:
+        '200':
+          description: Alpha evaluation completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluateResponse'
+        '400':
+          description: Bad request, missing or incorrect fields.
+        '404':
+          description: Metabolite family not found.
+
+  /families:
+    get:
+      summary: Retrieves a list of metabolite families.
+      description: Returns a list of available metabolite families for the system.
+      responses:
+        '200':
+          description: Successfully retrieved metabolite families.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '404':
+          description: No metabolite families found.
+
+  /experiments:
+    post:
+      summary: Adds an experiment to the database.
+      description: Adds new experiment data to the system.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExperimentRequest'
+      responses:
+        '200':
+          description: Experiment data added successfully.
+        '400':
+          description: Bad request, missing or incorrect fields.
+
+  /recommendFamily:
+    post:
+      summary: Recommends the most suitable metabolite family for a given configuration.
+      description: Given a configuration, recommends the most appropriate metabolite family.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Configuration'
+      responses:
+        '200':
+          description: Metabolite family recommended successfully.
+        '400':
+          description: Bad request, missing or incorrect "configuration".
+        '404':
+          description: No suitable metabolite family found.

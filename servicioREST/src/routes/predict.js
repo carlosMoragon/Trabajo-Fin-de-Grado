@@ -10,7 +10,7 @@ router.post('/', (req, res) => {
   }
 
   // Llamar al script Python pasando la clase del metabolito como argumento
-  const pythonProcess = spawn('python', ['../../src/modelo2/script_Bayess.py', family]);
+  const pythonProcess = spawn('python', ['../../src/modelos/script_Bayess.py', family]);
 
   // Variable para almacenar la respuesta del proceso Python
   let responseSent = false;
