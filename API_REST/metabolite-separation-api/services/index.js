@@ -1,8 +1,11 @@
 const DefaultService = require('./DefaultService');
 const PredictService = require('./PredictService');
-const RecommendFamilyServiceService = require('./RecommendFamilyServiceService');
+const RecommendFamilyService = require('./RecommendFamilyService');
+const EvaluateService = require('./evaluateService');
+
 module.exports = {
   DefaultService,
   PredictService,
-  RecommendFamilyServiceService
+  RecommendFamilyService,
+  EvaluateService
 };

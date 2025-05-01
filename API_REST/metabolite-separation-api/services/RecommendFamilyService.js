@@ -8,7 +8,8 @@ const recommendFamily = async (request, response) => {
   }
 
   const jsonString = JSON.stringify(config);
-  const pythonProcess = spawn('python', ['./scripts/modelos/predict_family_lgbm.py', jsonString]);
+  //const pythonProcess = spawn('python', ['scripts/modelos/predict_family_lgbm.py', jsonString]);
+  const pythonProcess = spawn('python', ['scripts/modelos/recommendFamily.py', jsonString]);
 
   let resultData = '';
   let responseSent = false;

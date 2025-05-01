@@ -173,6 +173,7 @@ module.exports = {
 const Controller = require('./Controller');
 const PredictService = require('../services/PredictService');
 const RecommendFamilyService = require('../services/RecommendFamilyService');
+const EvaluateService = require('../services/evaluateService');
 
 const predictPOST = async (request, response) => {
   await PredictService.predict(request, response);
@@ -183,7 +184,7 @@ const recommendFamilyPOST = async (request, response) => {
 };
 
 const evaluatePOST = async (request, response) => {
-  await Controller.handleRequest(request, response, service.evaluatePOST);
+  await EvaluateService.evaluate(request, response);//, service.evaluatePOST);
 };
 
 const experimentsPOST = async (request, response) => {

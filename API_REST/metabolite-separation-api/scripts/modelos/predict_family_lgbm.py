@@ -33,34 +33,35 @@ except json.JSONDecodeError as e:
 # ---------- 1. Carga del modelo y preprocesadores ----------
 
 # Cargar el modelo completo (incluyendo el pipeline)
-lgbm_model = joblib.load("../scripts/modelos/modelo2/modelo_lgbm.pkl")  # Cargar el modelo LightGBM
+#lgbm_model = joblib.load("scripts/modelos/modelo2/modelo_lgbm.pkl") 
+lgbm_model = joblib.load("scripts/modelos/modelo_xgboost.pkl") 
 
 # ---------- 2. Función de optimización ----------
 
 def objective(trial):
     config = {
-    "Eluent1": config_json['Eluent1'],
-    "Eluent2": config_json['Eluent2'],
-    "pH1": config_json['pH1'],
-    "pH2": config_json['pH2'],
-    "USP_Code": config_json['USP_Code'],
-    "Length": config_json['Length'],
-    "Particle_Size": config_json['Particle_Size'],
-    "Temperature": config_json['Temperature'],
-    "Flow": config_json['Flow'],
-    "T0": config_json['T0'],
-    "Duration": config_json['Duration'],
-    "x1": config_json['x1'],
-    "x2": config_json['x2'],
-    "x3": config_json['x3'],
-    "x4": config_json['x4'],
-    "x5": config_json['x5'],
-    "x6": config_json['x6'],
-    "x7": config_json['x7'],
-    "x8": config_json['x8'],
-    "x9": config_json['x9'],
-    "x10": config_json['x10'],
-    "Intercept": config_json['Intercept'],
+    "Eluent1": config_json['eluent1'],
+    "Eluent2": config_json['eluent2'],
+    "pH1": config_json['ph1'],
+    "pH2": config_json['ph2'],
+    "USP_Code": config_json['column']['uspCode'],
+    "Length": config_json['column']['length'],
+    "Particle_Size": config_json['column']['particleSize'],
+    "Temperature": config_json['column']['temperature'],
+    "Flow": config_json['column']['flowrate'],
+    "T0": config_json['column']['t0'],
+    "Duration": config_json['gradient']['duration'],
+    "x1": config_json['gradient']['x1'],
+    "x2": config_json['gradient']['x2'],
+    "x3": config_json['gradient']['x3'],
+    "x4": config_json['gradient']['x4'],
+    "x5": config_json['gradient']['x5'],
+    "x6": config_json['gradient']['x6'],
+    "x7": config_json['gradient']['x7'],
+    "x8": config_json['gradient']['x8'],
+    "x9": config_json['gradient']['x9'],
+    "x10": config_json['gradient']['x10'],
+    "Intercept": config_json['gradient']['intercept'],
     'Class': trial.suggest_categorical('Class', [
             'Azoles (CHEMONTID:0000436)', 
             'Benzene and substituted derivatives (CHEMONTID:0002279)', 

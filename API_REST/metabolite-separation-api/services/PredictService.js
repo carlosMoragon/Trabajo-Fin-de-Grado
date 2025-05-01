@@ -7,7 +7,8 @@ const predict = async (request, response) => {
     return response.status(400).json({ error: 'Missing "family" field.' });
   }
 
-  const pythonProcess = spawn('python', ['./scripts/modelos/script_Bayess.py', family]);
+  //const pythonProcess = spawn('python', ['./scripts/modelos/script_Bayess.py', family]);
+  const pythonProcess = spawn('python', ['./scripts/modelos/predict.py', family]);
 
   let resultData = '';
   let responseSent = false;
