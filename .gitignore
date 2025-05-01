@@ -1,4 +1,5 @@
 *__pycache__*
+.pkl
 *tmp/
 *node_modules/
 */data/RepoRT_classified_CCinformation/RepoRT_classified_CCinformation.tsv
