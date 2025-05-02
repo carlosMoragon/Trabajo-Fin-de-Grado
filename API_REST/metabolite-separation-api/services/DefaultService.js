@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 const Service = require('./Service');
-
+const Experiments = require('../models/Experiments');
 /**
 * Evaluates the alpha score for a given configuration.
 * Evaluates how good a configuration is for a metabolite family by calculating the alpha score.
@@ -23,22 +23,35 @@ const evaluatePOST = ({ evaluateRequest }) => new Promise(
   },
 );
 /**
-* Adds an experiment to the database.
-* Adds new experiment data to the system.
-*
-* experimentRequest ExperimentRequest  (optional)
-* no response value expected for this operation
-* */
-const experimentsPOST = ({ experimentRequest }) => new Promise(
+ * Adds an experiment to the database.
+ * Adds new experiment data to the system.
+ *
+ * experimentRequest ExperimentRequest  (optional)
+ * no response value expected for this operation
+ */
+const experimentsPOST = (request) => new Promise(
   async (resolve, reject) => {
     try {
+      const experimentRequest = request.body;
+      console.log('Datos de experimentRequest:', experimentRequest);
+
+      if (Array.isArray(experimentRequest)) {
+        await Experiments.insertMany(experimentRequest);
+        console.log('Experimentos insertados correctamente');
+      } else {
+        const newExperiment = new Experiments(experimentRequest);
+        console.log('Nuevo experimento:', newExperiment);
+        await newExperiment.save();
+      }
+
       resolve(Service.successResponse({
-        experimentRequest,
+        message: 'Experiment(s) saved successfully'
       }));
     } catch (e) {
+      console.error('Error saving experiment(s):', e);
       reject(Service.rejectResponse(
-        e.message || 'Invalid input',
-        e.status || 405,
+        'Failed to save experiment(s)',
+        400
       ));
     }
   },

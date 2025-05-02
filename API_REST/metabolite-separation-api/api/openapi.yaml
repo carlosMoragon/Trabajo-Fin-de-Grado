@@ -77,7 +77,8 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExperimentRequest'
+              #$ref: '#/components/schemas/ExperimentRequest'
+              $ref: '#/components/schemas/ExperimentRequestList'
       responses:
         "200":
           description: Experiment data added successfully.
@@ -352,6 +353,10 @@ components:
             this metabolite family.
           type: number
       type: object
+    ExperimentRequestList:
+      type: array
+      items:
+        $ref: '#/components/schemas/ExperimentRequest'
     ExperimentRequest:
       example:
         rt: 0.8008282
@@ -360,8 +365,14 @@ components:
           - 7.061401241503109
           - 7.061401241503109
           eluyente2: eluyente2
+          eluyente2_gradiente:
+          - 0.6
+          - 1.0
           ph1: 9.301444
           eluyente1: eluyente1
+          eluyente1_gradiente:
+          - 0.4
+          - 0.0
           ph2: 3.6160767
         alternative_parents: alternative_parents
         smiles_std: smiles_std
@@ -467,12 +478,22 @@ components:
         - 7.061401241503109
         - 7.061401241503109
         eluyente2: eluyente2
+        eluyente2_gradiente:
+          - 0.4
+          - 0.0
         ph1: 9.301444
         eluyente1: eluyente1
+        eluyente1_gradiente:
+          - 0.6
+          - 1.0
         ph2: 3.6160767
       properties:
         eluyente1:
           type: string
+        eluu_gradiente:
+          items:
+            type: number
+          type: array
         eluyente2:
           type: string
         t_gradiente:

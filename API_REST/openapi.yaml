@@ -183,7 +183,15 @@ components:
           type: object
           properties:
             eluyente1: { type: string }
+            eluyente1:
+              type: array
+              items:
+                type: number
             eluyente2: { type: string }
+            eluyente2:
+              type: array
+              items:
+                type: number
             t_gradiente:
               type: array
               items:
