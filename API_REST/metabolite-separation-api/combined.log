@@ -44,3 +44,6 @@
 {"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-02T16:08:18.456Z"}
 {"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-02T16:12:56.334Z"}
 {"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-02T16:15:57.632Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-02T16:34:55.297Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-02T16:40:10.946Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-02T16:40:50.128Z"}

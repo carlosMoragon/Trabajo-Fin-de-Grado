@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 const Service = require('./Service');
 const Experiments = require('../models/Experiments');
+const Family = require('../models/Family');
 /**
 * Evaluates the alpha score for a given configuration.
 * Evaluates how good a configuration is for a metabolite family by calculating the alpha score.
@@ -65,13 +66,21 @@ const experimentsPOST = (request) => new Promise(
 const familiesGET = () => new Promise(
   async (resolve, reject) => {
     try {
-      resolve(Service.successResponse({
-      }));
+      // Realizar la consulta en la base de datos para obtener solo las familias con API_version = 1
+      const families = await Family.find({ API_version: '1' });
+
+      // Devolver las familias en formato JSON
+      resolve({
+        success: true,
+        data: families,
+      });
     } catch (e) {
-      reject(Service.rejectResponse(
-        e.message || 'Invalid input',
-        e.status || 405,
-      ));
+      // Si hay un error, rechazamos la promesa
+      reject({
+        success: false,
+        message: e.message || 'Error al obtener las familias',
+        status: e.status || 500,
+      });
     }
   },
 );
