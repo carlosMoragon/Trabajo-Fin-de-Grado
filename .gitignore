@@ -2,5 +2,6 @@
 .pkl
 *tmp/
 *node_modules/
+*/data
 */data/RepoRT_classified_CCinformation/RepoRT_classified_CCinformation.tsv
 */data/dataset_preprocesado_csv/dataset_preprocesado_csv.csv

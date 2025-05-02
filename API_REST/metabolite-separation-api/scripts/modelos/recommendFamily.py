@@ -7,11 +7,13 @@ import json
 import optuna.logging
 import logging
 import warnings
+import config
 
 warnings.filterwarnings('ignore')
 optuna.logging.set_verbosity(optuna.logging.ERROR)
 logging.basicConfig(level=logging.ERROR)
 
+N = config.ITERATIONS 
 # Verificar que se pase el parámetro 'config_json'
 if len(sys.argv) != 2:
     print("Error: El parámetro 'config_json' no ha sido proporcionado.")
@@ -114,7 +116,7 @@ def objective(trial):
 
 # ---------- 3. Ejecutar la optimización ----------
 study = optuna.create_study(direction="maximize")
-study.optimize(objective, n_trials=1000)
+study.optimize(objective, n_trials=N)
 
 # ---------- 4. Resultado final ----------
 best_trial = study.best_trial

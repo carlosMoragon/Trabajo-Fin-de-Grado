@@ -7,6 +7,7 @@ import json
 import optuna.logging
 import logging
 import warnings
+import config
 
 warnings.filterwarnings('ignore')
 optuna.logging.set_verbosity(optuna.logging.ERROR)
@@ -17,7 +18,7 @@ if len(sys.argv) != 2:
     print("Error: El parámetro 'clase_metabolito' no ha sido proporcionado.")
     sys.exit(1)
 
-N = 1000
+N = config.ITERATIONS #1000
 CLASE_METABOLITO = sys.argv[1]
 
 # ---------- 1. Carga del modelo entrenado y preprocesadores ----------
