@@ -76,7 +76,7 @@ try:
 
     # Resultado final
     result = {
-        "score": float(y_pred_original[0])
+        "Score": float(y_pred_original[0])
     }
 
     print(json.dumps(result))

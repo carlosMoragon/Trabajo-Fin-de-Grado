@@ -66,24 +66,21 @@ const experimentsPOST = (request) => new Promise(
 const familiesGET = () => new Promise(
   async (resolve, reject) => {
     try {
-      // Realizar la consulta en la base de datos para obtener solo las familias con API_version = 1
-      const families = await Family.find({ API_version: '1' });
+      // Solo seleccionamos los campos "family" y "CHEMONTID"
+      const families = await Family.find({ API_version: '1' }).select('family CHEMONTID -_id');
 
-      // Devolver las familias en formato JSON
       resolve({
-        success: true,
-        data: families,
+        families
       });
     } catch (e) {
-      // Si hay un error, rechazamos la promesa
       reject({
-        success: false,
         message: e.message || 'Error al obtener las familias',
         status: e.status || 500,
       });
     }
   },
 );
+
 /**
 * Predicts the best configuration to separate a metabolite family.
 * Given a metabolite family, it returns the best configuration to separate them.

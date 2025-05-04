@@ -121,8 +121,8 @@ study.optimize(objective, n_trials=N)
 # ---------- 4. Resultado final ----------
 best_trial = study.best_trial
 result = {
-    "best_params": best_trial.params,
-    "best_value": best_trial.value
+    "Family": best_trial.params,
+    "Score": best_trial.value
 }
 
 print(json.dumps(result))
