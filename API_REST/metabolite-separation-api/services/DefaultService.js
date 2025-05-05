@@ -2,6 +2,7 @@
 const Service = require('./Service');
 const Experiments = require('../models/Experiments');
 const Family = require('../models/Family');
+const Feedbacks = require('../models/Feedback');
 /**
 * Evaluates the alpha score for a given configuration.
 * Evaluates how good a configuration is for a metabolite family by calculating the alpha score.
@@ -124,10 +125,77 @@ const recommendFamilyPOST = ({ configuration }) => new Promise(
   },
 );
 
+const feedbackPOST = (request) => new Promise(
+  async (resolve, reject) => {
+    try {
+      const feedbackRequest = request.body;
+      console.log('Datos de feedbackRequest:', feedbackRequest);
+
+      if (Array.isArray(feedbackRequest)) {
+        await Feedbacks.insertMany(feedbackRequest);
+        console.log('Feedbacks insertados correctamente');
+      } else {
+        const newFeedback = new Feedbacks(feedbackRequest);
+        console.log('Nuevo feedback:', newFeedback);
+        await newFeedback.save();
+      }
+
+      resolve(Service.successResponse({
+        message: 'Feedback(s) saved successfully'
+      }));
+    } catch (e) {
+      console.error('Error saving feedback(s):', e);
+      reject(Service.rejectResponse(
+        'Failed to save feedback(s)',
+        400
+      ));
+    }
+  },
+);
+
+const feedbackGET = (request) => new Promise( 
+  async (resolve, reject) => {
+    try {
+      // Obtener el parámetro "nombrefamilia" de la consulta (query)
+      const familyName = request.query.nombrefamilia;
+
+      let feedbacks;
+
+      // Si familyName existe, filtrar los feedbacks por esa familia
+      if (familyName) {
+        feedbacks = await Feedbacks.find({ family: familyName });
+        console.log(`Feedbacks encontrados para la familia: ${familyName}`);
+      } else {
+        // Si no se pasa "nombrefamilia", traer todos los feedbacks
+        feedbacks = await Feedbacks.find();
+        console.log('Todos los feedbacks:', feedbacks);
+      }
+
+      // Responder con los feedbacks encontrados
+      resolve(Service.successResponse({
+        message: 'Feedbacks retrieved successfully',
+        data: feedbacks
+      }));
+    } catch (e) {
+      console.error('Error retrieving feedbacks:', e);
+      reject(Service.rejectResponse(
+        'Failed to retrieve feedbacks',
+        500
+      ));
+    }
+  }
+);
+
+
+
+
+
 module.exports = {
   evaluatePOST,
   experimentsPOST,
   familiesGET,
   predictPOST,
   recommendFamilyPOST,
+  feedbackPOST,
+  feedbackGET
 };

@@ -105,8 +105,68 @@ paths:
           description: No suitable metabolite family found.
       summary: Recommends the most suitable metabolite family for a given configuration.
       x-eov-operation-handler: controllers/DefaultController
+  /feedback:
+    post:
+      description: Receives feedback on a predicted configuration, including user-assigned score.
+      operationId: feedbackPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+      responses:
+        "200":
+          description: Feedback submitted successfully.
+        "400":
+          description: Bad request, missing or invalid fields.
+      summary: Submits feedback on a configuration.
+      x-eov-operation-handler: controllers/DefaultController
+    get:
+      summary: Retrieves all submitted feedback.
+      description: Returns a list of all feedback entries stored in the database, optionally filtered by family.
+      operationId: feedbackGET
+      parameters:
+        - name: nombrefamilia
+          in: query
+          description: The family name to filter feedback by.
+          required: false
+          schema:
+            type: string
+            example: "Benzene and substituted derivatives (CHEMONTID:0002279)"
+      responses:
+        "200":
+          description: A list of feedback entries.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeedbackRequest'
+        "400":
+          description: Invalid query parameter.
+        "500":
+          description: Internal server error.
+      x-eov-operation-handler: controllers/DefaultController
 components:
   schemas:
+    FeedbackRequest:
+      type: object
+      required:
+        - configuration
+        - family
+        - score
+        - feedback
+      properties:
+        configuration:
+          $ref: '#/components/schemas/Configuration'
+        family:
+          type: string
+        score:
+          type: number
+        feedback:
+          type: integer
+          minimum: 0
+          maximum: 10
     FamilyRequest:
       example:
         family: family
