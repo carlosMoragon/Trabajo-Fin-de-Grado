@@ -30,9 +30,18 @@ const feedbackPOST = async (request, response) => {
   await Controller.handleRequest(request, response, service.feedbackPOST);
 };
 
-const feedbackGET = async (request, response) => {
-  await Controller.handleRequest(request, response, service.feedbackGET);
+const feedbackGET = async (req, res) => {
+  try {
+    const result = await service.feedbackGET(req);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Controller error:', error);
+    res.status(500).json({
+      message: 'Internal server error',
+    });
+  }
 };
+
 
 module.exports = {
   evaluatePOST,

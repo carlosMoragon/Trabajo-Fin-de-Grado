@@ -155,10 +155,12 @@ const feedbackPOST = (request) => new Promise(
 
 const feedbackGET = (request) => new Promise( 
   async (resolve, reject) => {
+    console.log('Request.query:', request.query);
     try {
+      
       // Obtener el parámetro "nombrefamilia" de la consulta (query)
       const familyName = request.query.nombrefamilia;
-
+      
       let feedbacks;
 
       // Si familyName existe, filtrar los feedbacks por esa familia
