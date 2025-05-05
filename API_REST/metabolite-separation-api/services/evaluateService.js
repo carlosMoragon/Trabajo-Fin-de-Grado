@@ -58,7 +58,8 @@ const evaluate = async (request, response) => {
 
   // 1. Revisar caché (Buscar en la base de datos)
   try {
-    const cachedResult = await Evaluate.findOne({ request: request.body });
+    //const cachedResult = await Evaluate.findOne({ request: request.body });
+    const cachedResult = await Log.findOne({ request: req.body }).sort({ 'respond.body.Score': -1 }).exec();
 
     if (cachedResult) {
       // Si se encuentra un resultado en caché, actualizar el contador de hits

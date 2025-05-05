@@ -174,7 +174,7 @@ const recommendFamily = async (request, response) => {
 
   // 1. Revisar caché (Buscar en la base de datos)
   try {
-    const cachedResult = await RecommendFamily.findOne({ request: request.body });
+    const cachedResult = await Log.findOne({ request: req.body }).sort({ 'respond.Score': -1 }).exec();
 
     if (cachedResult) {
       // Si se encuentra un resultado en caché, actualizar el contador de hits
@@ -192,7 +192,6 @@ const recommendFamily = async (request, response) => {
     logger.error('Error al consultar la caché en recommendFamily:', err);
   }
 
-  console.log("SE SIGUE PROCESANDO");
 
   // 2. Ejecutar el proceso de Python (en segundo plano) se ejecute o no haya caché.
   const jsonString = JSON.stringify(config); // Convertir config a JSON

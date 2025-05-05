@@ -12,7 +12,7 @@ const predict = async (req, res) => {
 
   // 1. Revisar caché (Buscar en la base de datos)
   try {
-    const cachedLog = await Log.findOne({ request: req.body });
+    const cachedLog = await Log.findOne({ request: req.body }).sort({ 'respond.Score': -1 }).exec();
 
     if (cachedLog) {
       // Si se encuentra un log en caché, actualizar el contador de hits
@@ -29,7 +29,7 @@ const predict = async (req, res) => {
   } catch (err) {
     logger.error('Error al consultar la caché en predict:', err);
   }
-  console.log("SE SIGUE PROCESANDO");
+  
   // 2. Ejecutar el proceso de Python (en segundo plano) se encuentre o no la respuesta en caché.
   const pythonProcess = spawn('python', ['./scripts/modelos/predict.py', family]);
 
