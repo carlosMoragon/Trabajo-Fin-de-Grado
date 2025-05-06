@@ -8,6 +8,8 @@ servers:
 paths:
   /predict:
     post:
+      tags:
+        - Prediction
       description: "Given a metabolite family, it returns the best configuration to\
         \ separate them."
       operationId: predictPOST
@@ -31,6 +33,8 @@ paths:
       x-eov-operation-handler: controllers/DefaultController
   /evaluate:
     post:
+      tags:
+        - Evaluate
       description: Evaluates how good a configuration is for a metabolite family by
         calculating the alpha score.
       operationId: evaluatePOST
@@ -54,6 +58,8 @@ paths:
       x-eov-operation-handler: controllers/DefaultController
   /families:
     get:
+      tags:
+        - Families
       description: Returns a list of available metabolite families for the system.
       operationId: familiesGET
       responses:
@@ -71,6 +77,8 @@ paths:
       x-eov-operation-handler: controllers/DefaultController
   /experiments:
     post:
+      tags:
+        - Experiments
       description: Adds new experiment data to the system.
       operationId: experimentsPOST
       requestBody:
@@ -88,6 +96,8 @@ paths:
       x-eov-operation-handler: controllers/DefaultController
   /recommendFamily:
     post:
+      tags:
+        - RecommendFamily
       description: "Given a configuration, recommends the most appropriate metabolite\
         \ family."
       operationId: recommendFamilyPOST
@@ -107,6 +117,8 @@ paths:
       x-eov-operation-handler: controllers/DefaultController
   /feedback:
     post:
+      tags:
+        - Feedback
       description: Receives feedback on a predicted configuration, including user-assigned score.
       operationId: feedbackPOST
       requestBody:
@@ -122,11 +134,13 @@ paths:
       summary: Submits feedback on a configuration.
       x-eov-operation-handler: controllers/DefaultController
     get:
+      tags:
+        - Feedback
       summary: Retrieves all submitted feedback.
       description: Returns a list of all feedback entries stored in the database, optionally filtered by family.
       operationId: feedbackGET
       parameters:
-        - name: nombrefamilia
+        - name: familyname
           in: query
           description: The family name to filter feedback by.
           required: false
@@ -518,7 +532,7 @@ components:
         usp_code:
           type: string
         length:
-          type: integer
+          type: number
         particle_size:
           format: float
           type: number
@@ -550,12 +564,16 @@ components:
       properties:
         eluyente1:
           type: string
-        eluu_gradiente:
+        eluyente1_gradiente:
           items:
             type: number
           type: array
         eluyente2:
           type: string
+        eluyente2_gradiente:
+          items:
+            type: number
+          type: array
         t_gradiente:
           items:
             type: number
@@ -567,3 +585,17 @@ components:
           format: float
           type: number
       type: object
+tags:
+  - name: Prediction
+    description: Operations related to predicting the best chromatographic configuration for a given metabolite family.
+  - name: Evaluate
+    description: Operations for evaluating the performance of a chromatographic configuration using an alpha score.
+  - name: Families
+    description: Endpoints to retrieve the list of supported metabolite families in the system.
+  - name: Experiments
+    description: Endpoints to submit new experimental data to improve or validate the model.
+  - name: RecommendFamily
+    description: Operations that recommend the most suitable metabolite family for a given configuration.
+  - name: Feedback
+    description: Endpoints to submit or retrieve user feedback on predicted configurations.
+

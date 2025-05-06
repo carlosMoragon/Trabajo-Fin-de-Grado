@@ -158,17 +158,15 @@ const feedbackGET = (request) => new Promise(
     console.log('Request.query:', request.query);
     try {
       
-      // Obtener el parámetro "nombrefamilia" de la consulta (query)
-      const familyName = request.query.nombrefamilia;
+      const familyName = request.query.familyname;
       
       let feedbacks;
 
-      // Si familyName existe, filtrar los feedbacks por esa familia
       if (familyName) {
         feedbacks = await Feedbacks.find({ family: familyName });
         console.log(`Feedbacks encontrados para la familia: ${familyName}`);
       } else {
-        // Si no se pasa "nombrefamilia", traer todos los feedbacks
+        
         feedbacks = await Feedbacks.find();
         console.log('Todos los feedbacks:', feedbacks);
       }

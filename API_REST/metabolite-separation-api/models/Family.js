@@ -6,5 +6,5 @@ const FamilySchema = new mongoose.Schema({
     API_version: String,
   });
   
-  // Definir el modelo de Mongoose basado en el esquema
-  module.exports = mongoose.model('Family', FamilySchema);
+  
+module.exports = mongoose.model('Family', FamilySchema);
