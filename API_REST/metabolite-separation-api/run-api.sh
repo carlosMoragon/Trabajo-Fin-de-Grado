@@ -14,6 +14,6 @@ docker stop $CONTAINER_NAME || true
 docker rm $CONTAINER_NAME || true
 
 echo "Ejecutando el contenedor..."
-docker run -d --name $CONTAINER_NAME -p $PORT:443 --restart always $IMAGE_NAME
+docker run -d --name $CONTAINER_NAME -p 8080:8080 --restart always $IMAGE_NAME
 
 echo "Contenedor $CONTAINER_NAME corriendo en el puerto $PORT"
