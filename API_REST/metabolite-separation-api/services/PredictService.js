@@ -95,7 +95,8 @@ const predict = async (req, res) => {
 
 module.exports = { predict };
 */
-require('dotenv').config(); 
+//require('dotenv').config(); 
+const config = require('../config');
 const axios = require('axios');
 const Log = require('../models/Predict');
 const logger = require('../logger');
@@ -125,9 +126,9 @@ const predict = async (req, res) => {
   }
 
   try {
-    // Leer IP y puerto del .env
-    const host = process.env.PREDICTOR_HOST;
-    const port = process.env.PREDICTOR_PORT;
+    
+    const host = config.PREDICTOR_HOST;
+    const port = config.PREDICTOR_PORT;
 
     // 2. Llamar al servicio externo (en vez del script local)
     const response = await axios.post(`http://${host}:${port}/predict`, { family });

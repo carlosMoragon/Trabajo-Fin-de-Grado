@@ -87,7 +87,8 @@ const evaluate = async (request, response) => {
 
 module.exports = { evaluate };
 */
-require('dotenv').config();
+//require('dotenv').config();
+const config = require('../config');
 const axios = require('axios');
 const Evaluate = require('../models/Evaluate');
 const logger = require('../logger');
@@ -114,8 +115,8 @@ const evaluate = async (req, res) => {
 
   try {
     // 2. Llamar al servicio externo /evaluate
-    const host = process.env.PREDICTOR_HOST;
-    const port = process.env.PREDICTOR_PORT;
+    const host = config.PREDICTOR_HOST;
+    const port = config.PREDICTOR_PORT;
 
     const response = await axios.post(`http://${host}:${port}/evaluate`, body);
     const result = response.data;

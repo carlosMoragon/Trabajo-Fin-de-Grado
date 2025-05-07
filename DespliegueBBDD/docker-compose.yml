@@ -19,7 +19,7 @@ services:
 volumes:
   mongodb_data:
     driver: local
-#Lo hago solo accesible desde la red local de docker
+
 networks:
   app-network:
     driver: bridge

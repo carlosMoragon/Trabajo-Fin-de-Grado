@@ -92,7 +92,8 @@ const recommendFamily = async (request, response) => {
 
 module.exports = { recommendFamily };
 */
-require('dotenv').config();
+//require('dotenv').config();
+const config = require('../config');
 const axios = require('axios');
 const RecommendFamily = require('../models/RecommendFamily');
 const logger = require('../logger');
@@ -118,9 +119,9 @@ const recommendFamily = async (req, res) => {
   }
 
   try {
-    // 2. Llamar al microservicio externo
-    const host = process.env.PREDICTOR_HOST;
-    const port = process.env.PREDICTOR_PORT;
+    
+    const host = config.PREDICTOR_HOST;
+    const port = config.PREDICTOR_PORT;
 
     const response = await axios.post(`http://${host}:${port}/recommendFamily`, { config });
     const result = response.data;
