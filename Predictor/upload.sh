@@ -4,19 +4,15 @@ USERNAME="cmoragon"
 IMAGE_NAME="predictor"
 TAG="latest"
 
-FULL_IMAGE_NAME="$USERNAME/$IMAGE_NAME:$TAG"
+# Nombre completo de la imagen
+FULL_IMAGE_NAME="$USERNAME/metabolite-separation-api-$IMAGE_NAME:$TAG"
 
-echo "🔨 Construyendo la imagen Docker: $FULL_IMAGE_NAME"
-docker build -t $FULL_IMAGE_NAME .
+echo "📤 Subiendo la imagen $FULL_IMAGE_NAME a Docker Hub..."
 
-if [ $? -ne 0 ]; then
-    echo "❌ Error al construir la imagen. Abortando."
-    exit 1
-fi
-
-echo "📤 Subiendo la imagen a Docker Hub..."
+# Subir la imagen ya construida a Docker Hub
 docker push $FULL_IMAGE_NAME
 
+# Verificar si la subida fue exitosa
 if [ $? -ne 0 ]; then
     echo "❌ Error al subir la imagen. Asegúrate de estar logueado con 'docker login'."
     exit 1
