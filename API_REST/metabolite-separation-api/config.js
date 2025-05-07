@@ -9,12 +9,12 @@ const config = {
   BASE_VERSION: '',
   CONTROLLER_DIRECTORY: path.join(__dirname, 'controllers'),
   PROJECT_DIR: __dirname,
-  HOSTDB: process.env.DATABASE_HOST || 'localhost',
+  HOSTDB: process.env.DATABASE_HOST || 'mongo',
   PORTDB: process.env.DATABASE_PORT || 27017,
   NAMEDB: process.env.DATABASE_NAME || 'metabolite-separation-api',
   USERDB: process.env.DATABASE_USER || 'root',
   PASSWORDDB: process.env.DATABASE_PASSWORD || 'rootpassword',
-  PREDICTOR_HOST: process.env.PREDICTOR_HOST || 'localhost',
+  PREDICTOR_HOST: process.env.PREDICTOR_HOST || 'predictor',
   PREDICTOR_PORT: process.env.PREDICTOR_PORT || 8000
 };
 config.OPENAPI_YAML = path.join(config.ROOT_DIR, 'api', 'openapi.yaml');
