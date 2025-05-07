@@ -1,167 +1,5 @@
 /*
 const { spawn } = require('child_process');
-const Log = require('../models/Predict');
-const logger = require('../logger');
-
-const predict = async (req, res) => {
-  const { family } = req.body;
-
-  if (!family) {
-    return res.status(400).json({ error: 'Missing "family" field.' });
-  }
-
-  // 1. Revisar caché (Buscar en la base de datos)
-  try {
-    const cachedLog = await Log.findOne({ request: req.body });
-
-    if (cachedLog) {
-      // Si se encuentra un log en caché, actualizar el contador de hits
-      cachedLog.cacheHits += 1;
-      await cachedLog.save();
-
-      // Indicar que ya se ha enviado una respuesta
-      res.locals.responseAlreadySent = true;
-      res.locals.calculatedResponse = cachedLog.respond;
-
-      // Enviar la respuesta desde la caché
-      res.status(200).json(cachedLog.respond);
-    }
-  } catch (err) {
-    logger.error('Error al consultar la caché en predict:', err);
-  }
-  console.log("SE SIGUE PROCESANDO");
-  // 2. Ejecutar el proceso de Python (en segundo plano) se encuentre o no la respuesta en caché.
-  const pythonProcess = spawn('python', ['./scripts/modelos/predict.py', family]);
-
-  let resultData = '';
-
-  pythonProcess.stdout.on('data', (data) => {
-    resultData += data.toString();
-  });
-
-  pythonProcess.stderr.on('data', (data) => {
-    logger.error('Error del script Python:', data.toString());
-
-    // Si el proceso Python falla, responder solo si no se ha respondido ya
-    if (!res.locals.responseAlreadySent) {
-      res.status(500).json({ error: 'Python script error', details: data.toString() });
-    }
-  });
-
-  pythonProcess.on('close', async (code) => {
-    if (code !== 0) {
-      // Si el proceso de Python falla, responder solo si no se ha respondido ya
-      if (!res.locals.responseAlreadySent) {
-        res.status(500).json({ error: `Python script exited with code ${code}` });
-      }
-      return;
-    }
-
-    try {
-      const result = JSON.parse(resultData);
-
-      // 3. Guardar el resultado del script en la base de datos (caché)
-      try {
-        // Usamos setImmediate para evitar bloquear el flujo de respuesta
-        setImmediate(async () => {
-          try {
-            await Log.create({
-              API_version: 1,
-              request: req.body,
-              respond: result,
-            });
-          } catch (saveErr) {
-            logger.error('Error guardando en la caché:', saveErr);
-          }
-        });
-      } catch (saveErr) {
-        logger.error('Error guardando en la caché:', saveErr);
-      }
-
-      // 4. Si no se respondió antes, enviar la respuesta final
-      if (!res.locals.responseAlreadySent) {
-        res.status(200).json(result);
-      }
-
-    } catch (parseErr) {
-      logger.error('Error al parsear la salida del script Python:', parseErr);
-      // Si el parseo de JSON falla, responder solo si no se ha respondido ya
-      if (!res.locals.responseAlreadySent) {
-        res.status(500).json({ error: 'Invalid JSON output from Python script.' });
-      }
-    }
-  });
-};
-
-const { spawn } = require('child_process');
-
-const recommendFamily = async (request, response) => {
-  const config = request.body.config;
-
-  if (!config || typeof config !== 'object') {
-    return response.status(400).json({ error: 'Missing or invalid configuration object.' });
-  }
-
-  try {
-    const cachedLog = await Log.findOne({ request: req.body });
-
-    if (cachedLog) {
-      // Si se encuentra un log en caché, actualizar el contador de hits
-      cachedLog.cacheHits += 1;
-      await cachedLog.save();
-
-      // Indicar que ya se ha enviado una respuesta
-      res.locals.responseAlreadySent = true;
-      res.locals.calculatedResponse = cachedLog.respond;
-
-      // Enviar la respuesta desde la caché
-      res.status(200).json(cachedLog.respond);
-    }
-  } catch (err) {
-    logger.error('Error al consultar la caché en predict:', err);
-  }
-
-  console.log("SE SIGUE PROCESANDO");
-  const jsonString = JSON.stringify(config);
-  //const pythonProcess = spawn('python', ['scripts/modelos/predict_family_lgbm.py', jsonString]);
-  const pythonProcess = spawn('python', ['scripts/modelos/recommendFamily.py', jsonString]);
-
-  let resultData = '';
-  let responseSent = false;
-
-  pythonProcess.stdout.on('data', (data) => {
-    resultData += data.toString();
-  });
-
-  pythonProcess.stderr.on('data', (data) => {
-    console.error('Python error:', data.toString());
-    if (!responseSent) {
-      response.status(500).json({ error: 'Python script error', details: data.toString() });
-      responseSent = true;
-    }
-  });
-
-  pythonProcess.on('close', (code) => {
-    if (!responseSent) {
-      if (code !== 0) {
-        response.status(500).json({ error: `Python script exited with code ${code}` });
-      } else {
-        try {
-          const result = JSON.parse(resultData);
-          response.status(200).json(result);
-        } catch (err) {
-          console.error('Error parsing Python output:', err);
-          response.status(500).json({ error: 'Invalid JSON output from Python script.' });
-        }
-      }
-      responseSent = true;
-    }
-  });
-};
-
-module.exports = { recommendFamily };
-*/
-const { spawn } = require('child_process');
 const RecommendFamily = require('../models/RecommendFamily'); // Modelo de caché
 const logger = require('../logger');
 
@@ -250,6 +88,70 @@ const recommendFamily = async (request, response) => {
       responseSent = true;
     }
   });
+};
+
+module.exports = { recommendFamily };
+*/
+require('dotenv').config();
+const axios = require('axios');
+const RecommendFamily = require('../models/RecommendFamily');
+const logger = require('../logger');
+
+const recommendFamily = async (req, res) => {
+  const { config } = req.body;
+
+  if (!config || typeof config !== 'object') {
+    return res.status(400).json({ error: 'Missing or invalid configuration object.' });
+  }
+
+  try {
+    // 1. Revisar caché
+    const cachedResult = await RecommendFamily.findOne({ request: req.body }).sort({ 'respond.Score': -1 }).exec();
+
+    if (cachedResult) {
+      cachedResult.cacheHits += 1;
+      await cachedResult.save();
+      return res.status(200).json(cachedResult.respond);
+    }
+  } catch (err) {
+    logger.error('Error al consultar la caché en recommendFamily:', err);
+  }
+
+  try {
+    // 2. Llamar al microservicio externo
+    const host = process.env.PREDICTOR_HOST;
+    const port = process.env.PREDICTOR_PORT;
+
+    const response = await axios.post(`http://${host}:${port}/recommendFamily`, { config });
+    const result = response.data;
+
+    // 3. Guardar en caché
+    setImmediate(async () => {
+      try {
+        await RecommendFamily.create({
+          API_version: 1,
+          request: req.body,
+          respond: result,
+        });
+      } catch (saveErr) {
+        logger.error('Error guardando en la caché de recommendFamily:', saveErr);
+      }
+    });
+
+    // 4. Enviar la respuesta
+    return res.status(200).json(result);
+  } catch (error) {
+    logger.error('Error al llamar al servicio externo de recommendFamily:', error.message);
+
+    if (error.response) {
+      return res.status(error.response.status).json({
+        error: 'Error from recommendFamily service',
+        details: error.response.data,
+      });
+    }
+
+    return res.status(500).json({ error: 'recommendFamily service unavailable' });
+  }
 };
 
 module.exports = { recommendFamily };

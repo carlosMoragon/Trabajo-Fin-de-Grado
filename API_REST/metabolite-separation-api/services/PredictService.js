@@ -1,4 +1,4 @@
-
+/*
 const { spawn } = require('child_process');
 const Log = require('../models/Predict');
 const logger = require('../logger');
@@ -91,6 +91,76 @@ const predict = async (req, res) => {
       }
     }
   });
+};
+
+module.exports = { predict };
+*/
+require('dotenv').config(); 
+const axios = require('axios');
+const Log = require('../models/Predict');
+const logger = require('../logger');
+
+const predict = async (req, res) => {
+  const { family } = req.body;
+
+  if (!family) {
+    return res.status(400).json({ error: 'Missing "family" field.' });
+  }
+
+  try {
+    // 1. Revisar caché (Buscar en la base de datos)
+    const cachedLog = await Log.findOne({ request: req.body }).sort({ 'respond.Score': -1 }).exec();
+
+    if (cachedLog) {
+      cachedLog.cacheHits += 1;
+      await cachedLog.save();
+
+      res.locals.responseAlreadySent = true;
+      res.locals.calculatedResponse = cachedLog.respond;
+
+      return res.status(200).json(cachedLog.respond);
+    }
+  } catch (err) {
+    logger.error('Error al consultar la caché en predict:', err);
+  }
+
+  try {
+    // Leer IP y puerto del .env
+    const host = process.env.PREDICTOR_HOST;
+    const port = process.env.PREDICTOR_PORT;
+
+    // 2. Llamar al servicio externo (en vez del script local)
+    const response = await axios.post(`http://${host}:${port}/predict`, { family });
+
+    const result = response.data;
+
+    // 3. Guardar el resultado en la base de datos (caché)
+    setImmediate(async () => {
+      try {
+        await Log.create({
+          API_version: 1,
+          request: req.body,
+          respond: result,
+        });
+      } catch (saveErr) {
+        logger.error('Error guardando en la caché:', saveErr);
+      }
+    });
+
+    // 4. Enviar la respuesta al cliente
+    return res.status(200).json(result);
+  } catch (error) {
+    logger.error('Error al llamar al servicio de predicción externo:', error.message);
+
+    if (error.response) {
+      return res.status(error.response.status).json({
+        error: 'Error from prediction service',
+        details: error.response.data,
+      });
+    }
+
+    return res.status(500).json({ error: 'Prediction service unavailable' });
+  }
 };
 
 module.exports = { predict };
