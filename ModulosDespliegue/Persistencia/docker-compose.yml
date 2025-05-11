@@ -13,6 +13,20 @@ services:
       - app-network
     restart: always
 
+  api:
+    build:
+      context: ./api
+    container_name: persistencia-api
+    depends_on:
+      - mongodb
+    ports:
+      - "8010:8010"
+    networks:
+      - app-network
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
+    restart: always
+
 volumes:
   mongodb_data:
     driver: local
