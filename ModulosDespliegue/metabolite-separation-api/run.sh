@@ -1,23 +1,16 @@
 #!/bin/bash
 
-set -e
-
-IMAGE_NAME="metabolite-api"
-CONTAINER_NAME="api-container"
+SERVICE_NAME="api-container"
 PORT=8080
 
 cd "$(dirname "$0")"
 
-echo "[INFO] Construyendo la imagen Docker..."
-docker build -t $IMAGE_NAME .
+echo "Levantando el contenedor con docker-compose..."
+docker-compose up --build -d
 
-# Detener y eliminar el contenedor anterior si ya existe
-echo "[INFO] Deteniendo y eliminando contenedor si existe..."
-docker stop $CONTAINER_NAME || true
-docker rm $CONTAINER_NAME || true
-
-# Iniciar el nuevo contenedor
-echo "[INFO] Ejecutando el contenedor..."
-docker run -d --name $CONTAINER_NAME -p $PORT:$PORT --restart always $IMAGE_NAME
-
-echo "[INFO] Contenedor $CONTAINER_NAME corriendo en el puerto $PORT"
+if [ "$(docker ps -q -f name=$SERVICE_NAME)" ]; then
+    echo "Contenedor $SERVICE_NAME corriendo en el puerto $PORT"
+else
+    echo "Hubo un problema al iniciar el contenedor."
+    exit 1
+fi
