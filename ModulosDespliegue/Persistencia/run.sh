@@ -31,5 +31,9 @@ if ! command -v docker-compose &> /dev/null; then
     install_docker_compose
 fi
 
+# Detener y eliminar contenedores, redes y volúmenes previos si existen
+echo "[INFO] Deteniendo y eliminando contenedores existentes..."
+docker-compose down
+
 echo "[INFO] Levantando servicios con Docker Compose..."
 docker-compose up -d --build
