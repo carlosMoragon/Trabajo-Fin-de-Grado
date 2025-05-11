@@ -71,7 +71,7 @@ class Config(BaseModel):
     gradient: Gradient
 
 class RecommendFamilyCacheModel(BaseModel):
-    config: Config
+    configuration: Config
 
 '''
 /evaluate/cache
@@ -257,4 +257,4 @@ class RequestResponseModel(BaseModel):
     request: Dict[str, Any]
     respond: Dict[str, Any]
     cacheHits: Optional[int] = 0
-    timestamp: Optional[datetime] = None
+    timestamp: Optional[datetime] = Field(default_factory=datetime.utcnow)

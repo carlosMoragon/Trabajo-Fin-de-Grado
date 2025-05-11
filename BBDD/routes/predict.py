@@ -19,7 +19,8 @@ async def predict_cache(data: PredictCacheModel):
         cached['cacheHits'] = cached.get('cacheHits', 0) + 1
         await predicts.replace_one({"_id": cached["_id"]}, cached)
         return {"cached": True, "result": cached}
-
+    else:
+        return {"cached": False, "result": None}
     raise HTTPException(status_code=404, detail="Cache not found for provided family.")
 
 # Ruta para guardar un resultado en la caché

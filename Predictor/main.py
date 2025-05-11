@@ -14,7 +14,7 @@ class PredictInput(BaseModel):
     family: str
 
 class FamilyRecommendInput(BaseModel):
-    config: dict
+    configuration: dict
 
 # --- Endpoints ---
 
@@ -48,9 +48,9 @@ def predict(data: PredictInput):
         raise HTTPException(status_code=500, detail=f"Error en el script predict.py: {error_output}")
 
 @app.post("/recommendFamily")
-def recommend(config: FamilyRecommendInput):
+def recommend(configuration: FamilyRecommendInput):
     try:
-        config_dict = config.dict()
+        config_dict = configuration.dict()
         json_config = json.dumps(config_dict)
         print(json_config)
         output = subprocess.check_output(

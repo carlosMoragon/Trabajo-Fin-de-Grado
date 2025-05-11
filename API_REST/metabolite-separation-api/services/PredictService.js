@@ -98,11 +98,15 @@ module.exports = { predict };
 //require('dotenv').config(); 
 const config = require('../config');
 const axios = require('axios');
-const Log = require('../models/Predict');
+//const Log = require('../models/Predict');
 const logger = require('../logger');
 
 const predict = async (req, res) => {
   const { family } = req.body;
+  const db_host = config.DATABASE_API_HOST;
+  const db_port = config.DATABASE_API_PORT;
+  const host = config.PREDICTOR_HOST;
+  const port = config.PREDICTOR_PORT;
 
   if (!family) {
     return res.status(400).json({ error: 'Missing "family" field.' });
@@ -110,7 +114,7 @@ const predict = async (req, res) => {
 
   try {
     // 1. Revisar caché (Buscar en la base de datos)
-    const cachedLog = await Log.findOne({ request: req.body }).sort({ 'respond.Score': -1 }).exec();
+    /*const cachedLog = await Log.findOne({ request: req.body }).sort({ 'respond.Score': -1 }).exec();
 
     if (cachedLog) {
       cachedLog.cacheHits += 1;
@@ -119,7 +123,16 @@ const predict = async (req, res) => {
       res.locals.responseAlreadySent = true;
       res.locals.calculatedResponse = cachedLog.respond;
 
-      return res.status(200).json(cachedLog.respond);
+      //return res.status(200).json(cachedLog.respond);
+      res.status(200).json(cachedLog.respond);
+    }*/
+    const cachedLog = await axios.post(`http://${db_host}:${db_port}/predict/cache`, req.body);
+
+    if (cachedLog.data.cached == true) {
+      res.locals.responseAlreadySent = true;
+      res.locals.calculatedResponse = cachedLog.data;
+    
+      res.status(200).json(cachedLog.data);
     }
   } catch (err) {
     logger.error('Error al consultar la caché en predict:', err);
@@ -127,9 +140,6 @@ const predict = async (req, res) => {
 
   try {
     
-    const host = config.PREDICTOR_HOST;
-    const port = config.PREDICTOR_PORT;
-
     // 2. Llamar al servicio externo (en vez del script local)
     const response = await axios.post(`http://${host}:${port}/predict`, { family });
 
@@ -137,6 +147,22 @@ const predict = async (req, res) => {
 
     // 3. Guardar el resultado en la base de datos (caché)
     setImmediate(async () => {
+      try {
+        await axios.post(`http://${db_host}:${db_port}/predict/save`, {
+          API_version: 1,
+          request: req.body,
+          respond: result,
+        });
+      } catch (saveErr) {
+        logger.error('Error guardando en la caché (predict):', saveErr);
+      }
+    });
+    
+    // Enviar la respuesta al cliente
+    if (!res.locals.responseAlreadySent) {
+      return res.status(200).json(result);
+    }
+      /*
       try {
         await Log.create({
           API_version: 1,
@@ -149,7 +175,7 @@ const predict = async (req, res) => {
     });
 
     // 4. Enviar la respuesta al cliente
-    return res.status(200).json(result);
+    return res.status(200).json(result);*/
   } catch (error) {
     logger.error('Error al llamar al servicio de predicción externo:', error.message);
 

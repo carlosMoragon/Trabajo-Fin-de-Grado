@@ -20,7 +20,8 @@ async def evaluate_cache(data: RecommendFamilyCacheModel):
         cached['cacheHits'] = cached.get('cacheHits', 0) + 1
         await recommendfamilies.replace_one({"_id": cached["_id"]}, cached)
         return {"cached": True, "result": cached}
-    
+    else:
+        return {"cached": False, "result": None}
     raise HTTPException(status_code=404, detail="Cache not found")
 
 

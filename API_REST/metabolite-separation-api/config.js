@@ -15,7 +15,10 @@ const config = {
   USERDB: process.env.DATABASE_USER || 'root',
   PASSWORDDB: process.env.DATABASE_PASSWORD || 'rootpassword',
   PREDICTOR_HOST: process.env.PREDICTOR_HOST || 'predictor',
-  PREDICTOR_PORT: process.env.PREDICTOR_PORT || 8000
+  PREDICTOR_PORT: process.env.PREDICTOR_PORT || 8000,
+  DATABASE_API_HOST: process.env.DATABASE_API_HOST || 'localhost',
+  DATABASE_API_PORT: process.env.DATABASE_API_PORT || 8010
+
 };
 config.OPENAPI_YAML = path.join(config.ROOT_DIR, 'api', 'openapi.yaml');
 config.FULL_PATH = `${config.URL_PATH}:${config.URL_PORT}/${config.BASE_VERSION}`;

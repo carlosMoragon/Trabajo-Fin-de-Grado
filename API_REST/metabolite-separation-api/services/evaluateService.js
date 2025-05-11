@@ -102,13 +102,20 @@ const evaluate = async (req, res) => {
 
   try {
     // 1. Revisar caché
-    const cachedResult = await Evaluate.findOne({ request: req.body }).sort({ 'respond.Score': -1 }).exec();
+    //const cachedResult = await Evaluate.findOne({ request: req.body }).sort({ 'respond.Score': -1 }).exec();
+    const db_host = config.DATABASE_API_HOST;
+    const db_port = config.DATABASE_API_PORT;
+    const cachedResult = await axios.post(`http://${db_host}:${db_port}/evaluate/cache`, req.body);
 
-    if (cachedResult) {
+    if (cachedResult.data) {
+      return res.status(200).json(cachedResult.data);
+    }
+
+    /*if (cachedResult) {
       cachedResult.cacheHits += 1;
       await cachedResult.save();
       return res.status(200).json(cachedResult.respond);
-    }
+    }*/
   } catch (err) {
     logger.error('Error al consultar la caché en evaluate:', err);
   }
@@ -124,6 +131,22 @@ const evaluate = async (req, res) => {
     // 3. Guardar resultado en caché
     setImmediate(async () => {
       try {
+        await axios.post(`http://${db_host}:${db_port}/evaluate/save`, {
+          API_version: 1,
+          request: req.body,
+          respond: result,
+        });
+      } catch (saveErr) {
+        logger.error('Error guardando en la caché de evaluate:', saveErr);
+      }
+    });
+    
+    // 4. Enviar respuesta
+    if(!cachedResult){
+      return res.status(200).json(result);
+    }
+    
+      /*try {
         await Evaluate.create({
           API_version: 1,
           request: req.body,
@@ -135,7 +158,7 @@ const evaluate = async (req, res) => {
     });
 
     // 4. Enviar respuesta
-    return res.status(200).json(result);
+    return res.status(200).json(result);*/
   } catch (error) {
     logger.error('Error al llamar al servicio externo de evaluate:', error.message);
 
