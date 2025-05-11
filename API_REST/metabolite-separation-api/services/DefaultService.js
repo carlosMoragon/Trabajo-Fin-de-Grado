@@ -3,6 +3,7 @@ const Service = require('./Service');
 const Experiments = require('../models/Experiments');
 const Family = require('../models/Family');
 const Feedbacks = require('../models/Feedback');
+const axios = require('axios');
 /**
 * Evaluates the alpha score for a given configuration.
 * Evaluates how good a configuration is for a metabolite family by calculating the alpha score.
@@ -35,6 +36,33 @@ const experimentsPOST = (request) => new Promise(
   async (resolve, reject) => {
     try {
       const experimentRequest = request.body;
+      //console.log('Datos de experimentRequest:', experimentRequest);
+
+      const response = await axios.post('http://localhost:8010/experiments', experimentRequest, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      //console.log('Respuesta del backend:', response.data);
+
+      resolve(Service.successResponse({
+        message: 'Experiment(s) forwarded successfully',
+        data: response.data
+      }));
+    } catch (e) {
+      //console.error('Error forwarding experiment(s):', e.message);
+      reject(Service.rejectResponse(
+        'Failed to forward experiment(s)',
+        500
+      ));
+    }
+  },
+);
+/*const experimentsPOST = (request) => new Promise(
+  async (resolve, reject) => {
+    try {
+      const experimentRequest = request.body;
       console.log('Datos de experimentRequest:', experimentRequest);
 
       if (Array.isArray(experimentRequest)) {
@@ -57,7 +85,7 @@ const experimentsPOST = (request) => new Promise(
       ));
     }
   },
-);
+);*/
 /**
 * Retrieves a list of metabolite families.
 * Returns a list of available metabolite families for the system.
@@ -65,6 +93,25 @@ const experimentsPOST = (request) => new Promise(
 * returns List
 * */
 const familiesGET = () => new Promise(
+  async (resolve, reject) => {
+    try {
+      const response = await axios.get('http://localhost:8010/families');
+
+      resolve({
+        families: response.data
+      });
+    } catch (e) {
+      console.error('Error al redirigir la solicitud de familias:', e.message);
+
+      reject({
+        message: e.message || 'Error al obtener las familias desde el backend',
+        status: e.response?.status || 500,
+      });
+    }
+  },
+);
+
+/*const familiesGET = () => new Promise(
   async (resolve, reject) => {
     try {
       // Solo seleccionamos los campos "family" y "CHEMONTID"
@@ -80,7 +127,7 @@ const familiesGET = () => new Promise(
       });
     }
   },
-);
+);*/
 
 /**
 * Predicts the best configuration to separate a metabolite family.
@@ -124,7 +171,7 @@ const recommendFamilyPOST = ({ configuration }) => new Promise(
     }
   },
 );
-
+/*
 const feedbackPOST = (request) => new Promise(
   async (resolve, reject) => {
     try {
@@ -181,6 +228,52 @@ const feedbackGET = (request) => new Promise(
       reject(Service.rejectResponse(
         'Failed to retrieve feedbacks',
         500
+      ));
+    }
+  }
+);
+*/
+
+const feedbackPOST = (request) => new Promise(
+  async (resolve, reject) => {
+    try {
+      const feedbackRequest = request.body;
+      console.log('Redirigiendo feedbackPOST con datos:', feedbackRequest);
+
+      const response = await axios.post('http://localhost:8010/feedbacks', feedbackRequest);
+
+      resolve(Service.successResponse({
+        message: 'Feedback(s) saved successfully (via proxy)',
+        data: response.data
+      }));
+    } catch (e) {
+      console.error('Error al redirigir feedbackPOST:', e.message);
+      reject(Service.rejectResponse(
+        'Failed to save feedback(s) via proxy',
+        e.response?.status || 400
+      ));
+    }
+  },
+);
+const feedbackGET = (request) => new Promise(
+  async (resolve, reject) => {
+    try {
+      const queryParams = request.query;
+      console.log('Redirigiendo feedbackGET con query:', queryParams);
+
+      const response = await axios.get('http://localhost:8010/feedbacks', {
+        params: queryParams
+      });
+
+      resolve(Service.successResponse({
+        message: 'Feedbacks retrieved successfully (via proxy)',
+        data: response.data
+      }));
+    } catch (e) {
+      console.error('Error al redirigir feedbackGET:', e.message);
+      reject(Service.rejectResponse(
+        'Failed to retrieve feedbacks via proxy',
+        e.response?.status || 500
       ));
     }
   }

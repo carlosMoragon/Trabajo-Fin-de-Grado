@@ -246,7 +246,7 @@ class FeedbackConfiguration(BaseModel):
 
 class FeedbackModel(BaseModel):
     family: str
-    config: FeedbackConfiguration
+    configuration: FeedbackConfiguration
     score: float
     feedback: float
     

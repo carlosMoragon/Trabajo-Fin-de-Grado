@@ -265,3 +265,8 @@
 {"level":"error","message":"Error guardando en la caché de evaluate: db_host is not defined","service":"user-service","stack":"ReferenceError: db_host is not defined\n    at Immediate._onImmediate (C:\\Users\\cmora\\Desktop\\TFG\\ESTE_ES_EL_TFG\\API_REST\\metabolite-separation-api\\services\\evaluateService.js:134:36)\n    at process.processImmediate (node:internal/timers:483:21)","timestamp":"2025-05-11T14:36:50.351Z"}
 {"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-11T14:37:17.095Z"}
 {"level":"error","message":"Error guardando en la caché de evaluate: db_host is not defined","service":"user-service","stack":"ReferenceError: db_host is not defined\n    at Immediate._onImmediate (C:\\Users\\cmora\\Desktop\\TFG\\ESTE_ES_EL_TFG\\API_REST\\metabolite-separation-api\\services\\evaluateService.js:134:36)\n    at process.processImmediate (node:internal/timers:483:21)","timestamp":"2025-05-11T14:37:23.205Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-11T14:38:11.204Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-11T14:40:09.640Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-11T14:40:29.909Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-11T14:43:03.190Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-11T14:43:52.998Z"}
