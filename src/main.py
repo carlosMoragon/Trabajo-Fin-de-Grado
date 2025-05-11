@@ -36,7 +36,7 @@ def main():
     dataset = preprocesar_dataset(dataset)
 
     dataset = calcular_gradiente(dataset)
-
+    
     family = args.family
     types_of_experiments = get_types_of_experiments(dataset)
     family_name = get_family_name(family)
