@@ -270,3 +270,12 @@
 {"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-11T14:40:29.909Z"}
 {"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-11T14:43:03.190Z"}
 {"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-11T14:43:52.998Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-11T14:52:22.334Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-11T14:53:14.353Z"}
+{"level":"error","message":"Error al consultar la caché en recommendFamily: cachedLog is not defined","service":"user-service","stack":"ReferenceError: cachedLog is not defined\n    at Object.recommendFamily (C:\\Users\\cmora\\Desktop\\TFG\\ESTE_ES_EL_TFG\\API_REST\\metabolite-separation-api\\services\\RecommendFamilyService.js:29:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async recommendFamilyPOST (C:\\Users\\cmora\\Desktop\\TFG\\ESTE_ES_EL_TFG\\API_REST\\metabolite-separation-api\\controllers\\DefaultController.js:13:3)","timestamp":"2025-05-11T14:53:38.045Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-11T14:54:16.998Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-11T14:54:43.933Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-11T14:55:45.369Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-11T14:56:27.953Z"}
+{"level":"error","message":"Error guardando en la caché de evaluate: db_host is not defined","service":"user-service","stack":"ReferenceError: db_host is not defined\n    at Immediate._onImmediate (C:\\Users\\cmora\\Desktop\\TFG\\ESTE_ES_EL_TFG\\API_REST\\metabolite-separation-api\\services\\evaluateService.js:134:36)\n    at process.processImmediate (node:internal/timers:483:21)","timestamp":"2025-05-11T14:56:41.520Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-05-11T14:57:17.472Z"}

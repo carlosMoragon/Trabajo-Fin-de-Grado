@@ -10,7 +10,6 @@ const recommendFamily = async (req, res) => {
   const host = config.PREDICTOR_HOST;
   const port = config.PREDICTOR_PORT;
 
-  console.log(`ENTRA: ${configuration}`)
   if (!configuration || typeof configuration !== 'object') {
     return res.status(400).json({ error: 'Missing or invalid configuration object.' });
   }
@@ -26,8 +25,8 @@ const recommendFamily = async (req, res) => {
       //cachedResult.cacheHits += 1;
       //await cachedResult.save();
       res.locals.responseAlreadySent = true;
-      res.locals.calculatedResponse = cachedLog.data;
-      res.status(200).json(cachedResult.data.respond);
+      res.locals.calculatedResponse = cachedResult.data;
+      res.status(200).json(cachedResult.data.result.respond);
     }
   } catch (err) {
     logger.error('Error al consultar la caché en recommendFamily:', err);

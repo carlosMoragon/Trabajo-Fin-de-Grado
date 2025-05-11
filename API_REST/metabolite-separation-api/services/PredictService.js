@@ -132,7 +132,7 @@ const predict = async (req, res) => {
       res.locals.responseAlreadySent = true;
       res.locals.calculatedResponse = cachedLog.data;
     
-      res.status(200).json(cachedLog.data);
+      res.status(200).json(cachedLog.data.result.respond);
     }
   } catch (err) {
     logger.error('Error al consultar la caché en predict:', err);

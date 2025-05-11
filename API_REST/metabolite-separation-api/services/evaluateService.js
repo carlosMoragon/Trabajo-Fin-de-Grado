@@ -95,6 +95,10 @@ const logger = require('../logger');
 
 const evaluate = async (req, res) => {
   const body = req.body;
+  const db_host = config.DATABASE_API_HOST;
+  const db_port = config.DATABASE_API_PORT;
+  const host = config.PREDICTOR_HOST;
+  const port = config.PREDICTOR_PORT;
 
   if (!body || typeof body.configuration !== 'object') {
     return res.status(400).json({ error: 'Missing or invalid configuration object.' });
@@ -103,8 +107,7 @@ const evaluate = async (req, res) => {
   try {
     // 1. Revisar caché
     //const cachedResult = await Evaluate.findOne({ request: req.body }).sort({ 'respond.Score': -1 }).exec();
-    const db_host = config.DATABASE_API_HOST;
-    const db_port = config.DATABASE_API_PORT;
+
     const cachedResult = await axios.post(`http://${db_host}:${db_port}/evaluate/cache`, req.body);
 
     if (cachedResult.data.cached == true) {
@@ -122,8 +125,7 @@ const evaluate = async (req, res) => {
 
   try {
     // 2. Llamar al servicio externo /evaluate
-    const host = config.PREDICTOR_HOST;
-    const port = config.PREDICTOR_PORT;
+
 
     const response = await axios.post(`http://${host}:${port}/evaluate`, body);
     const result = response.data;

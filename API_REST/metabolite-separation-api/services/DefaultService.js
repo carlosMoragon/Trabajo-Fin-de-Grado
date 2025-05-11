@@ -4,6 +4,7 @@ const Experiments = require('../models/Experiments');
 const Family = require('../models/Family');
 const Feedbacks = require('../models/Feedback');
 const axios = require('axios');
+const config = require('../config');
 /**
 * Evaluates the alpha score for a given configuration.
 * Evaluates how good a configuration is for a metabolite family by calculating the alpha score.
@@ -36,9 +37,11 @@ const experimentsPOST = (request) => new Promise(
   async (resolve, reject) => {
     try {
       const experimentRequest = request.body;
+      const db_host = config.DATABASE_API_HOST;
+      const db_port = config.DATABASE_API_PORT;
       //console.log('Datos de experimentRequest:', experimentRequest);
 
-      const response = await axios.post('http://localhost:8010/experiments', experimentRequest, {
+      const response = await axios.post(`http://${db_host}:${db_port}/experiments`, experimentRequest, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -94,8 +97,10 @@ const experimentsPOST = (request) => new Promise(
 * */
 const familiesGET = () => new Promise(
   async (resolve, reject) => {
+    const db_host = config.DATABASE_API_HOST;
+    const db_port = config.DATABASE_API_PORT;
     try {
-      const response = await axios.get('http://localhost:8010/families');
+      const response = await axios.get(`http://${db_host}:${db_port}/families`);
 
       resolve({
         families: response.data
@@ -238,9 +243,11 @@ const feedbackPOST = (request) => new Promise(
   async (resolve, reject) => {
     try {
       const feedbackRequest = request.body;
+      const db_host = config.DATABASE_API_HOST;
+      const db_port = config.DATABASE_API_PORT;
       console.log('Redirigiendo feedbackPOST con datos:', feedbackRequest);
 
-      const response = await axios.post('http://localhost:8010/feedbacks', feedbackRequest);
+      const response = await axios.post(`http://${db_host}:${db_port}/feedbacks`, feedbackRequest);
 
       resolve(Service.successResponse({
         message: 'Feedback(s) saved successfully (via proxy)',
@@ -259,9 +266,11 @@ const feedbackGET = (request) => new Promise(
   async (resolve, reject) => {
     try {
       const queryParams = request.query;
+      const db_host = config.DATABASE_API_HOST;
+      const db_port = config.DATABASE_API_PORT;
       console.log('Redirigiendo feedbackGET con query:', queryParams);
 
-      const response = await axios.get('http://localhost:8010/feedbacks', {
+      const response = await axios.get(`http://${db_host}:${db_port}/feedbacks`, {
         params: queryParams
       });
 

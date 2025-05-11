@@ -5,15 +5,15 @@ const mongoose = require('mongoose');
 
 const launchServer = async () => {
   try {
-    require('dotenv').config(); 
-    const host = config.HOSTDB;
-    const port = config.PORTDB;
-    const name = config.NAMEDB;
-    const user = config.USERDB;
-    const password = config.PASSWORDDB;
+    //require('dotenv').config(); 
+    //const host = config.HOSTDB;
+    //const port = config.PORTDB;
+    //const name = config.NAMEDB;
+    //const user = config.USERDB;
+    //const password = config.PASSWORDDB;
 
-    await mongoose.connect(`mongodb://${user}:${password}@${host}:${port}/${name}?authSource=admin`);
-    console.log('✅ MongoDB connected');
+    //await mongoose.connect(`mongodb://${user}:${password}@${host}:${port}/${name}?authSource=admin`);
+    //console.log('✅ MongoDB connected');
 
     const expressServer = new ExpressServer(config.URL_PORT, config.OPENAPI_YAML);
     expressServer.launch();
