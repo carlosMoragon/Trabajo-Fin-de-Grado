@@ -107,7 +107,7 @@ const evaluate = async (req, res) => {
     const db_port = config.DATABASE_API_PORT;
     const cachedResult = await axios.post(`http://${db_host}:${db_port}/evaluate/cache`, req.body);
 
-    if (cachedResult.data) {
+    if (cachedResult.data.cached == true) {
       return res.status(200).json(cachedResult.data);
     }
 
@@ -142,9 +142,8 @@ const evaluate = async (req, res) => {
     });
     
     // 4. Enviar respuesta
-    if(!cachedResult){
-      return res.status(200).json(result);
-    }
+    return res.status(200).json(result);
+    
     
       /*try {
         await Evaluate.create({
