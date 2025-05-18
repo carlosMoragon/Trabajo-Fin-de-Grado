@@ -4,9 +4,9 @@ services:
   api:
     build: .
     environment:
-      - PREDICTOR_HOST=127.0.0.1
+      - PREDICTOR_HOST=192.168.189.168
       - PREDICTOR_PORT=8000
-      - DATABASE_API_HOST=127.0.0.1
+      - DATABASE_API_HOST=192.168.189.168
       - DATABASE_API_PORT=8010
     ports:
       - "8080:8080"
