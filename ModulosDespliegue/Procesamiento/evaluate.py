@@ -31,6 +31,7 @@ else:
 
 # ---------- 2. Construir input del modelo ----------
 try:
+    '''
     config = {
         "Eluent1": config_json['configuration']['eluent1'],
         "Eluent2": config_json['configuration']['eluent2'],
@@ -55,12 +56,38 @@ try:
         "x10": config_json['configuration']['gradient']['x10'],
         "Intercept": config_json['configuration']['gradient']['intercept'],
         "Class": config_json['family']
+    }'''
+    config = {
+        "eluent_1": config_json['configuration']['eluent_1'],
+        "eluent_2": config_json['configuration']['eluent_2'],
+        "eluent_1_ph": config_json['configuration']['eluent_1_ph'],
+        "eluent_2_ph": config_json['configuration']['eluent_2_ph'],
+        "column_usp_code": config_json['configuration']['column']['column_usp_code'],
+        "column_length": config_json['configuration']['column']['column_length'],
+        "particle_size": config_json['configuration']['column']['particle_size'],
+        "column_temperature": config_json['configuration']['column']['column_temperature'],
+        "column_flowrate": config_json['configuration']['column']['column_flowrate'],
+        "dead_time": config_json['configuration']['column']['dead_time'],
+        "duration": config_json['configuration']['gradient']['duration'],
+        "x1": config_json['configuration']['gradient']['x1'],
+        "x2": config_json['configuration']['gradient']['x2'],
+        "x3": config_json['configuration']['gradient']['x3'],
+        "x4": config_json['configuration']['gradient']['x4'],
+        "x5": config_json['configuration']['gradient']['x5'],
+        "x6": config_json['configuration']['gradient']['x6'],
+        "x7": config_json['configuration']['gradient']['x7'],
+        "x8": config_json['configuration']['gradient']['x8'],
+        "x9": config_json['configuration']['gradient']['x9'],
+        "x10": config_json['configuration']['gradient']['x10'],
+        "x0": config_json['configuration']['gradient']['x0'],
+        "class": config_json['class']
     }
+
 
     df_input = pd.DataFrame([config])
 
     # Codificar columnas categóricas
-    cat_cols = ["Class", "Eluent1", "Eluent2", "USP_Code"]
+    cat_cols = ["class", "eluent_1", "eluent_2", "column_usp_code"]
     df_input[cat_cols] = encoder.transform(df_input[cat_cols])
 
     # Reordenar columnas
@@ -75,7 +102,7 @@ try:
 
     # Resultado final
     result = {
-        "Score": float(y_pred_original[0])
+        "score": float(y_pred_original[0])
     }
 
     print(json.dumps(result))

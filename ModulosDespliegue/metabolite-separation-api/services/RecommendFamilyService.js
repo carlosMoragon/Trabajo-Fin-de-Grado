@@ -1,6 +1,5 @@
 const config = require('../config');
 const axios = require('axios');
-//const RecommendFamily = require('../models/RecommendFamily');
 const logger = require('../logger');
 
 const recommendFamily = async (req, res) => {
@@ -48,16 +47,7 @@ const recommendFamily = async (req, res) => {
       } catch (saveErr) {
         logger.error('Error guardando en la caché (recommendFamily):', saveErr);
       }
-      /*
-      try {
-        await RecommendFamily.create({
-          API_version: 1,
-          request: req.body,
-          respond: result,
-        });
-      } catch (saveErr) {
-        logger.error('Error guardando en la caché de recommendFamily:', saveErr);
-      }*/
+
     });
 
     // 4. Enviar la respuesta

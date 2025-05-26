@@ -1,8 +1,5 @@
 /* eslint-disable no-unused-vars */
 const Service = require('./Service');
-const Experiments = require('../models/Experiments');
-const Family = require('../models/Family');
-const Feedbacks = require('../models/Feedback');
 const axios = require('axios');
 const config = require('../config');
 /**
@@ -48,9 +45,9 @@ const experimentsPOST = (request) => new Promise(
       });
 
       //console.log('Respuesta del backend:', response.data);
-
+      //resolve(response.data);
       resolve(Service.successResponse({
-        message: 'Experiment(s) forwarded successfully',
+        message: 'Data received',
         data: response.data
       }));
     } catch (e) {
@@ -62,33 +59,7 @@ const experimentsPOST = (request) => new Promise(
     }
   },
 );
-/*const experimentsPOST = (request) => new Promise(
-  async (resolve, reject) => {
-    try {
-      const experimentRequest = request.body;
-      console.log('Datos de experimentRequest:', experimentRequest);
 
-      if (Array.isArray(experimentRequest)) {
-        await Experiments.insertMany(experimentRequest);
-        console.log('Experimentos insertados correctamente');
-      } else {
-        const newExperiment = new Experiments(experimentRequest);
-        console.log('Nuevo experimento:', newExperiment);
-        await newExperiment.save();
-      }
-
-      resolve(Service.successResponse({
-        message: 'Experiment(s) saved successfully'
-      }));
-    } catch (e) {
-      console.error('Error saving experiment(s):', e);
-      reject(Service.rejectResponse(
-        'Failed to save experiment(s)',
-        400
-      ));
-    }
-  },
-);*/
 /**
 * Retrieves a list of metabolite families.
 * Returns a list of available metabolite families for the system.
@@ -116,23 +87,6 @@ const familiesGET = () => new Promise(
   },
 );
 
-/*const familiesGET = () => new Promise(
-  async (resolve, reject) => {
-    try {
-      // Solo seleccionamos los campos "family" y "CHEMONTID"
-      const families = await Family.find({ API_version: '1' }).select('family CHEMONTID -_id');
-
-      resolve({
-        families
-      });
-    } catch (e) {
-      reject({
-        message: e.message || 'Error al obtener las familias',
-        status: e.status || 500,
-      });
-    }
-  },
-);*/
 
 /**
 * Predicts the best configuration to separate a metabolite family.
@@ -176,68 +130,7 @@ const recommendFamilyPOST = ({ configuration }) => new Promise(
     }
   },
 );
-/*
-const feedbackPOST = (request) => new Promise(
-  async (resolve, reject) => {
-    try {
-      const feedbackRequest = request.body;
-      console.log('Datos de feedbackRequest:', feedbackRequest);
 
-      if (Array.isArray(feedbackRequest)) {
-        await Feedbacks.insertMany(feedbackRequest);
-        console.log('Feedbacks insertados correctamente');
-      } else {
-        const newFeedback = new Feedbacks(feedbackRequest);
-        console.log('Nuevo feedback:', newFeedback);
-        await newFeedback.save();
-      }
-
-      resolve(Service.successResponse({
-        message: 'Feedback(s) saved successfully'
-      }));
-    } catch (e) {
-      console.error('Error saving feedback(s):', e);
-      reject(Service.rejectResponse(
-        'Failed to save feedback(s)',
-        400
-      ));
-    }
-  },
-);
-
-const feedbackGET = (request) => new Promise( 
-  async (resolve, reject) => {
-    console.log('Request.query:', request.query);
-    try {
-      
-      const familyName = request.query.familyname;
-      
-      let feedbacks;
-
-      if (familyName) {
-        feedbacks = await Feedbacks.find({ family: familyName });
-        console.log(`Feedbacks encontrados para la familia: ${familyName}`);
-      } else {
-        
-        feedbacks = await Feedbacks.find();
-        console.log('Todos los feedbacks:', feedbacks);
-      }
-
-      // Responder con los feedbacks encontrados
-      resolve(Service.successResponse({
-        message: 'Feedbacks retrieved successfully',
-        data: feedbacks
-      }));
-    } catch (e) {
-      console.error('Error retrieving feedbacks:', e);
-      reject(Service.rejectResponse(
-        'Failed to retrieve feedbacks',
-        500
-      ));
-    }
-  }
-);
-*/
 
 const feedbackPOST = (request) => new Promise(
   async (resolve, reject) => {
@@ -249,10 +142,11 @@ const feedbackPOST = (request) => new Promise(
 
       const response = await axios.post(`http://${db_host}:${db_port}/feedbacks`, feedbackRequest);
 
-      resolve(Service.successResponse({
+      resolve(response.data);
+      /*resolve(Service.successResponse({
         message: 'Feedback(s) saved successfully (via proxy)',
         data: response.data
-      }));
+      }));*/
     } catch (e) {
       console.error('Error al redirigir feedbackPOST:', e.message);
       reject(Service.rejectResponse(
@@ -262,6 +156,7 @@ const feedbackPOST = (request) => new Promise(
     }
   },
 );
+
 const feedbackGET = (request) => new Promise(
   async (resolve, reject) => {
     try {
@@ -273,15 +168,15 @@ const feedbackGET = (request) => new Promise(
       const response = await axios.get(`http://${db_host}:${db_port}/feedbacks`, {
         params: queryParams
       });
-
-      resolve(Service.successResponse({
+      resolve(response.data);
+      /*resolve(Service.successResponse({
         message: 'Feedbacks retrieved successfully (via proxy)',
         data: response.data
-      }));
+      }));*/
     } catch (e) {
       console.error('Error al redirigir feedbackGET:', e.message);
       reject(Service.rejectResponse(
-        'Failed to retrieve feedbacks via proxy',
+        'Failed to retrieve feedbacks',
         e.response?.status || 500
       ));
     }
