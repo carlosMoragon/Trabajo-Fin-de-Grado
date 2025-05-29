@@ -45,7 +45,7 @@ router = APIRouter()
 # Ruta para consultar la caché
 @router.post("/cache")
 @with_clean_mongo_id(remove_id=True)
-async def recommend_family_cache(data: Config):#RecommendFamilyCacheModel):
+async def recommend_family_cache(data: RecommendFamilyCacheModel): #Config):
     cached = await recommendfamilies.find_one(
         {"request": data.dict(exclude_unset=True)},
         sort=[("respond.score", DESCENDING)]

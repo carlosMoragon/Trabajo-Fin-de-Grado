@@ -27,10 +27,12 @@ async def get_feedback(familyname: str = None):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving feedbacks: {e}")
 '''
-from fastapi import APIRouter, HTTPException 
+
+from fastapi import APIRouter, HTTPException, Query
 from models import FeedbackModel
 from db import feedbacks
 from utils import with_clean_mongo_id
+from typing import List, Optional
 
 router = APIRouter()
 
@@ -42,12 +44,50 @@ async def add_feedback(feedback_request: FeedbackModel):
         return {"message": "Feedback saved successfully"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error saving feedback: {e}")
-
-# Ruta para obtener feedbacks (opcionalmente filtrado por familia)
-#async def get_feedback(familyname: str = None):
 @router.get("/", response_model=list[FeedbackModel])
 @with_clean_mongo_id(remove_id=True)
-async def get_feedback(classname: str = None):
+async def get_feedback(classname: Optional[str] = Query(None, alias="classname")):
+    """
+    Si pasas ?classname=Foo, filtra por Foo en el campo 'class' o en 'class_'.
+    Si no pasas nada, devuelve todos.
+    Luego renombra siempre 'class_' → 'class' antes de instanciar.
+    """
+    # construye filtro opcional basándote en tu código original
+    if classname:
+        filt = {"$or": [{"class": classname}, {"class_": classname}]}
+    else:
+        filt = {}
+
+    try:
+        docs = await feedbacks.find(filt, {"_id": 0}).to_list(length=None)
+
+        cleaned = []
+        for d in docs:
+            # si viene "class_", lo movemos a "class"
+            if "class_" in d:
+                d["class"] = d.pop("class_")
+            cleaned.append(d)
+
+        # instanciamos FeedbackModel para validar y usar el alias "class"
+        return [FeedbackModel(**d) for d in cleaned]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving feedbacks: {e}")
+'''async def get_feedback(classname: Optional[str] = Query(None, alias="classname")):
+    docs = await feedbacks.find(
+        {"class": classname} if classname else {},
+        {"_id": 0}
+    ).to_list(length=None)
+
+    cleaned = []
+    for d in docs:
+        # si el documento trae "class_", lo pasamos a "class"
+        if "class_" in d:
+            d["class"] = d.pop("class_")
+        cleaned.append(d)
+
+    # ahora cada dict tiene "class" y Pydantic casará perfectamente
+    return [FeedbackModel(**d) for d in cleaned]'''
+'''async def get_feedback(classname: str = None):
     try:
         if classname:
             feedbacks_list = await feedbacks.find({"class": classname}).to_list(length=None)
@@ -57,4 +97,4 @@ async def get_feedback(classname: str = None):
         # Asegurarse que cada elemento cumple el modelo
         return [FeedbackModel(**item) for item in feedbacks_list]
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error retrieving feedbacks: {e}")
+        raise HTTPException(status_code=500, detail=f"Error retrieving feedbacks: {e}")'''

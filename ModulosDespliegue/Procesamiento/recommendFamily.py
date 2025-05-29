@@ -179,7 +179,7 @@ study.optimize(objective, n_trials=N)
 # ---------- 4. Resultado final ----------
 best_trial = study.best_trial
 result = {
-    "class": best_trial.params,
+    "class": best_trial.params["class"],
     "score": best_trial.value
 }
 

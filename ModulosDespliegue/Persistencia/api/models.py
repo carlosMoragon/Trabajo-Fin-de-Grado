@@ -124,6 +124,7 @@ class Gradient(BaseModel):
 
 class Column(BaseModel):
     column_usp_code: str = Field(..., alias="column_usp_code")
+    column_name: Optional[str] = Field(None,  alias="column_name")
     column_length: float = Field(..., alias="column_length")
     particle_size: float = Field(..., alias="particle_size")
     column_temperature: float = Field(..., alias="column_temperature")
@@ -160,7 +161,7 @@ class Classyfire(BaseModel):
     level5: Optional[str]
     level6: Optional[str]
 
-class ExperimentModel(BaseModel):
+'''class ExperimentModel(BaseModel):
     metabolite_name: Optional[str]
     formula: Optional[str]
     rt: Optional[float]
@@ -172,6 +173,20 @@ class ExperimentModel(BaseModel):
     alternative_parents: Optional[str]
     column: Optional[Column]
     gradient: Optional[Gradient]
+'''
+class ExperimentModel(BaseModel):
+    metabolite_name: Optional[str] = None
+    formula: Optional[str] = None
+    rt: Optional[float] = None
+    smiles_std: Optional[str] = None
+    inchi_std: Optional[str] = None
+    inchikey_std: Optional[str] = None
+    classyfire: Optional[Classyfire] = None
+    comment: Optional[str] = None
+    alternative_parents: Optional[str] = None
+    column: Optional[Column] = None
+    gradient: Optional[Gradient] = None 
+
 
 # === Family ===
 
