@@ -313,10 +313,16 @@ components:
           type: string
         column:
           $ref: '#/components/schemas/experiment_column'
-        gradiente:
-          oneOf:
-            - $ref: '#/components/schemas/experiment_gradient'
-            - $ref: '#/components/schemas/gradient'
+        eluent_1:
+          type: string
+        eluent_2:
+          type: string
+        eluent_1_ph:
+          type: number
+        eluent_2_ph:
+          type: number
+        gradient:
+          $ref: '#/components/schemas/gradient'
 
     classyfire:
       type: object
@@ -352,29 +358,21 @@ components:
         t0:
           type: number
 
-    experiment_gradient:
-      type: object
-      properties:
-        eluyente1:
-          type: string
-        eluyente1_gradiente:
-          type: array
-          items:
-            type: number
-        eluyente2:
-          type: string
-        eluyente2_gradiente:
-          type: array
-          items:
-            type: number
-        t_gradiente:
-          type: array
-          items:
-            type: number
-        ph1:
-          type: number
-        ph2:
-          type: number
+    #experiment_gradient:
+    #  type: object
+    #  properties:
+    #    eluent_1_gradient:
+    #      type: array
+    #      items:
+    #        type: number
+    #    eluent_2_gradient:
+    #      type: array
+    #      items:
+    #        type: number
+    #    time_gradient:
+    #      type: array
+    #      items:
+    #        type: number
 
     configuration:
       type: object

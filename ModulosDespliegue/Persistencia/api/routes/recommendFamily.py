@@ -35,7 +35,7 @@ async def recommend_family_save(data: RequestResponseModel):
         raise HTTPException(status_code=500, detail=f"Error saving result: {e}")
 '''
 from fastapi import APIRouter, HTTPException
-from models import RequestResponseModel, RecommendFamilyCacheModel
+from models import RequestResponseModel, RecommendFamilyCacheModel, Config
 from db import recommendfamilies
 from pymongo import DESCENDING
 from utils import with_clean_mongo_id
@@ -45,7 +45,7 @@ router = APIRouter()
 # Ruta para consultar la caché
 @router.post("/cache")
 @with_clean_mongo_id(remove_id=True)
-async def recommend_family_cache(data: RecommendFamilyCacheModel):
+async def recommend_family_cache(data: Config):#RecommendFamilyCacheModel):
     cached = await recommendfamilies.find_one(
         {"request": data.dict(exclude_unset=True)},
         sort=[("respond.score", DESCENDING)]

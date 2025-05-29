@@ -161,7 +161,7 @@ class Classyfire(BaseModel):
     level6: Optional[str]
 
 class ExperimentModel(BaseModel):
-    name_metabolito: Optional[str]
+    metabolite_name: Optional[str]
     formula: Optional[str]
     rt: Optional[float]
     smiles_std: Optional[str]
@@ -171,7 +171,7 @@ class ExperimentModel(BaseModel):
     comment: Optional[str]
     alternative_parents: Optional[str]
     column: Optional[Column]
-    gradiente: Optional[Gradient]
+    gradient: Optional[Gradient]
 
 # === Family ===
 

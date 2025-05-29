@@ -44,9 +44,9 @@ async def add_feedback(feedback_request: FeedbackModel):
         raise HTTPException(status_code=400, detail=f"Error saving feedback: {e}")
 
 # Ruta para obtener feedbacks (opcionalmente filtrado por familia)
+#async def get_feedback(familyname: str = None):
 @router.get("/", response_model=list[FeedbackModel])
 @with_clean_mongo_id(remove_id=True)
-#async def get_feedback(familyname: str = None):
 async def get_feedback(classname: str = None):
     try:
         if classname:
