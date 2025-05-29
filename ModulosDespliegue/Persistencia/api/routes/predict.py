@@ -46,7 +46,7 @@ router = APIRouter()
 @with_clean_mongo_id(remove_id=True)
 async def predict_cache(data: PredictCacheModel):
     cached = await predicts.find_one(
-        {"request.class": data.class_},  # actualiza de family → class
+        {"request.class": data.class_},
         sort=[("respond.score", DESCENDING)]
     )
 

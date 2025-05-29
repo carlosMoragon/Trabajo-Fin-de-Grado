@@ -46,10 +46,11 @@ async def add_feedback(feedback_request: FeedbackModel):
 # Ruta para obtener feedbacks (opcionalmente filtrado por familia)
 @router.get("/", response_model=list[FeedbackModel])
 @with_clean_mongo_id(remove_id=True)
-async def get_feedback(familyname: str = None):
+#async def get_feedback(familyname: str = None):
+async def get_feedback(classname: str = None):
     try:
-        if familyname:
-            feedbacks_list = await feedbacks.find({"class": familyname}).to_list(length=None)
+        if classname:
+            feedbacks_list = await feedbacks.find({"class": classname}).to_list(length=None)
         else:
             feedbacks_list = await feedbacks.find().to_list(length=None)
 

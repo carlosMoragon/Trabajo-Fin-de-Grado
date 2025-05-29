@@ -82,7 +82,7 @@ const predict = async (req, res) => {
     return res.status(400).json({ error: 'Missing "class" field.' });
   }
 
-  const requestPayload = { class: metaboliteClass }; // alias compatible con los microservicios antiguos
+  const requestPayload = { class: metaboliteClass };
 
   try {
     const cachedLog = await axios.post(`http://${db_host}:${db_port}/predict/cache`, requestPayload);

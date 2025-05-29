@@ -7,6 +7,7 @@ servers:
   - url: /
 paths:
   #/predict, /evaluate, /recommendFamily, /families, /experiments, /feedback
+  #Revisada
   /predict:
     post:
       tags:
@@ -32,7 +33,7 @@ paths:
         '404':
           description: Class not found
       x-eov-operation-handler: controllers/DefaultController
-
+  #Revisada
   /evaluate:
     post:
       tags:
@@ -58,7 +59,7 @@ paths:
         '404':
           description: Class not found
       x-eov-operation-handler: controllers/DefaultController
-
+  #Revisada
   /recommendFamily:
     post:
       tags:
@@ -84,7 +85,7 @@ paths:
         '404':
           description: No suitable class found
       x-eov-operation-handler: controllers/DefaultController
-
+  #Revisada
   /families:
     get:
       tags:
@@ -102,7 +103,7 @@ paths:
         '404':
           description: No classes found
       x-eov-operation-handler: controllers/DefaultController
-
+  #Revisada
   /experiments:
     post:
       tags:
@@ -126,8 +127,9 @@ paths:
         '400':
           description: Bad request
       x-eov-operation-handler: controllers/DefaultController
-
+  
   /feedback:
+    #Revisada
     post:
       tags:
         - Feedback
@@ -150,7 +152,7 @@ paths:
         '400':
           description: Bad request
       x-eov-operation-handler: controllers/DefaultController
-
+    #Revisada
     get:
       tags:
         - Feedback
@@ -191,12 +193,8 @@ components:
       type: object
       required:
         - configuration
-        - class
         - score
       properties:
-        class:
-          type: string
-          description: The metabolite class evaluated.
         configuration:
           $ref: '#/components/schemas/configuration'
         score:
@@ -237,7 +235,17 @@ components:
     families_response:
       type: array
       items:
-        type: string
+        type: object
+        properties:
+          class:
+            type: string
+            example: "Azoles"
+          CHEMOTID:
+            type: string
+            example: "0000436"
+          API_version:
+            type: string
+            example: "1"
 
     feedback_request:
       type: object
@@ -306,7 +314,9 @@ components:
         column:
           $ref: '#/components/schemas/experiment_column'
         gradiente:
-          $ref: '#/components/schemas/experiment_gradient'
+          oneOf:
+            - $ref: '#/components/schemas/experiment_gradient'
+            - $ref: '#/components/schemas/gradient'
 
     classyfire:
       type: object
