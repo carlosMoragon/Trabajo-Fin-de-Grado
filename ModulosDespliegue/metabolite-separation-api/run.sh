@@ -3,15 +3,34 @@
 SERVICE_NAME="api-container"
 PORT=8080
 
+# Instalar Docker si no está instalado
+if ! command -v docker &> /dev/null; then
+    echo "Docker no encontrado. Instalando Docker..."
+    curl -fsSL https://get.docker.com | sh
+    systemctl enable docker
+    systemctl start docker
+    echo "Docker instalado."
+fi
+
+# Instalar docker-compose si no está instalado
+if ! command -v docker-compose &> /dev/null; then
+    echo "docker-compose no encontrado. Instalando docker-compose..."
+    COMPOSE_VERSION="1.29.2"
+    curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    chmod +x /usr/local/bin/docker-compose
+    echo "docker-compose instalado."
+fi
+
 # Cambiar al directorio donde se encuentra el script
 cd "$(dirname "$0")"
 
-# Detener los contenedores que están utilizando el puerto 8080
-CONTAINER_ID=$(docker ps -q -f "expose=$PORT")
-
-if [ -n "$CONTAINER_ID" ]; then
-    echo "Deteniendo los contenedores que están utilizando el puerto $PORT..."
-    docker stop $CONTAINER_ID
+# Detener y eliminar contenedores que usan el puerto
+CONTAINERS=$(docker ps -q -f "publish=$PORT")
+if [ -n "$CONTAINERS" ]; then
+    echo "Deteniendo contenedores que usan el puerto $PORT..."
+    docker stop $CONTAINERS
+    echo "Eliminando contenedores..."
+    docker rm $CONTAINERS
 else
     echo "No se encontraron contenedores usando el puerto $PORT."
 fi
