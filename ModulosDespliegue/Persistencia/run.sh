@@ -2,9 +2,6 @@
 
 set -e
 
-SERVICE_NAME="api-container"
-PORT=8080
-
 install_docker() {
     echo "[INFO] Instalando Docker..."
     sudo dnf -y update
@@ -19,8 +16,7 @@ install_docker() {
 
 install_docker_compose() {
     echo "[INFO] Instalando Docker Compose..."
-    COMPOSE_VERSION="1.29.2"
-    sudo curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
     echo "[INFO] Docker Compose instalado."
 }
@@ -35,33 +31,9 @@ if ! command -v docker-compose &> /dev/null; then
     install_docker_compose
 fi
 
-# Cambiar al directorio donde se encuentra el script
-cd "$(dirname "$0")"
-
-# Detener y eliminar contenedores que usan el puerto
-echo "[INFO] Buscando contenedores que exponen el puerto $PORT..."
-CONTAINERS=$(docker ps -q -f "publish=$PORT")
-if [ -n "$CONTAINERS" ]; then
-    echo "[INFO] Deteniendo contenedores en el puerto $PORT..."
-    docker stop $CONTAINERS
-    echo "[INFO] Eliminando contenedores..."
-    docker rm $CONTAINERS
-else
-    echo "[INFO] No se encontraron contenedores usando el puerto $PORT."
-fi
-
-# Detener servicios de docker-compose previos
-echo "[INFO] Deteniendo servicios definidos en docker-compose..."
+# Detener y eliminar contenedores, redes y volúmenes previos si existen
+echo "[INFO] Deteniendo y eliminando contenedores existentes..."
 docker-compose down
 
-# Levantar servicios con docker-compose
 echo "[INFO] Levantando servicios con Docker Compose..."
 docker-compose up -d --build
-
-# Verificar que el servicio esté corriendo
-if [ "$(docker ps -q -f name=$SERVICE_NAME)" ]; then
-    echo "[INFO] Contenedor $SERVICE_NAME corriendo en el puerto $PORT"
-else
-    echo "[ERROR] Hubo un problema al iniciar el contenedor $SERVICE_NAME."
-    exit 1
-fi

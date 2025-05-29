@@ -1,94 +1,57 @@
 #!/bin/bash
 
-set -e
-
 SERVICE_NAME="api-container"
 PORT=8080
-COMPOSE_VERSION="1.29.2"
+
+set -e
 
 install_docker() {
     echo "[INFO] Instalando Docker..."
-    # Detectar distribución
-    if [ -f /etc/os-release ]; then
-        . /etc/os-release
-    fi
-    # Configurar repositorio
-    echo "[INFO] Configurando repositorio Docker para ${NAME}..."
-    sudo dnf -y install yum-utils
-    sudo yum-config-manager \
-        --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-    # Instalar paquetes
+    sudo dnf -y update
+    sudo dnf -y install dnf-plugins-core
+    sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
     sudo dnf -y install docker-ce docker-ce-cli containerd.io
-    # Iniciar y habilitar servicio
-    sudo systemctl enable --now docker
-    # Agregar usuario al grupo docker
-    sudo usermod -aG docker $USER || true
-    echo "[INFO] Docker instalado. Puede que necesites cerrar sesión para aplicar permisos de Docker."
+    sudo systemctl start docker
+    sudo systemctl enable docker
+    sudo usermod -aG docker $USER
+    echo "[INFO] Docker instalado. Reinicia la sesión para aplicar cambios de grupo."
 }
 
 install_docker_compose() {
-    echo "[INFO] Instalando Docker Compose ${COMPOSE_VERSION}..."
-    sudo curl -sSL \
-        "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" \
-        -o /usr/local/bin/docker-compose
+    echo "[INFO] Instalando Docker Compose..."
+    sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
     echo "[INFO] Docker Compose instalado."
 }
 
-echo "[INFO] Verificando instalación de Docker y Docker Compose..."
+echo "[INFO] Verificando instalación de Docker y Compose..."
 
 if ! command -v docker &> /dev/null; then
     install_docker
-else
-    echo "[INFO] Docker ya está instalado."
 fi
 
 if ! command -v docker-compose &> /dev/null; then
     install_docker_compose
+fi
+
+# Detener los contenedores que están utilizando el puerto 8080
+CONTAINER_ID=$(docker ps -q -f "expose=$PORT")
+
+if [ -n "$CONTAINER_ID" ]; then
+    echo "Deteniendo los contenedores que están utilizando el puerto $PORT..."
+    docker stop $CONTAINER_ID
 else
-    echo "[INFO] Docker Compose ya está instalado."
+    echo "No se encontraron contenedores usando el puerto $PORT."
 fi
 
-# Cambiar al directorio donde se encuentra el script
-cd "$(dirname "$0")"
+# Levantar el contenedor con docker-compose
+echo "Levantando el contenedor con docker-compose..."
+docker-compose up --build -d
 
-# Comprobar servicio Docker
-if ! sudo docker version &> /dev/null; then
-    echo "[ERROR] Docker no está corriendo o no se puede acceder. Asegúrate de que el servicio esté iniciado y tu usuario tenga permisos."
-    exit 1
-fi
-
-# Detener y eliminar contenedores que usan el puerto especificado
-echo "[INFO] Buscando contenedores que exponen el puerto $PORT..."
-CONTAINERS=$(sudo docker ps -q -f "publish=$PORT")
-if [ -n "$CONTAINERS" ]; then
-    echo "[INFO] Deteniendo contenedores en el puerto $PORT..."
-    sudo docker stop $CONTAINERS
-    echo "[INFO] Eliminando contenedores..."
-    sudo docker rm $CONTAINERS
+# Verificar si el contenedor está corriendo
+if [ "$(docker ps -q -f name=$SERVICE_NAME)" ]; then
+    echo "Contenedor $SERVICE_NAME corriendo en el puerto $PORT"
 else
-    echo "[INFO] No se encontraron contenedores usando el puerto $PORT."
-fi
-
-# Detener servicios definidos en docker-compose
-if [ -f docker-compose.yml ]; then
-    echo "[INFO] Deteniendo servicios de docker-compose..."
-    sudo docker-compose down
-fi
-
-# Levantar servicios
-if [ -f docker-compose.yml ]; then
-    echo "[INFO] Levantando servicios con Docker Compose..."
-    sudo docker-compose up -d --build
-else
-    echo "[ERROR] No se encontró docker-compose.yml en el directorio $(pwd)."
-    exit 1
-fi
-
-# Verificar que el contenedor esté corriendo
-if sudo docker ps -q -f name=$SERVICE_NAME &> /dev/null; then
-    echo "[INFO] Contenedor '$SERVICE_NAME' corriendo en el puerto $PORT"
-else
-    echo "[ERROR] Hubo un problema al iniciar el contenedor '$SERVICE_NAME'."
+    echo "Hubo un problema al iniciar el contenedor."
     exit 1
 fi
