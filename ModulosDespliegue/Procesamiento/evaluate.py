@@ -18,7 +18,8 @@ except json.JSONDecodeError as e:
     sys.exit(1)
 
 # ---------- 1. Cargar modelo y preprocesadores ----------
-contenido = joblib.load("./modelo_xgboost.pkl")
+#contenido = joblib.load("./modelo_xgboost.pkl")
+contenido = joblib.load("./modelo.pkl")
 
 if isinstance(contenido, dict):
     model = contenido.get("model")
@@ -31,32 +32,6 @@ else:
 
 # ---------- 2. Construir input del modelo ----------
 try:
-    '''
-    config = {
-        "Eluent1": config_json['configuration']['eluent1'],
-        "Eluent2": config_json['configuration']['eluent2'],
-        "pH1": config_json['configuration']['ph1'],
-        "pH2": config_json['configuration']['ph2'],
-        "USP_Code": config_json['configuration']['column']['uspCode'],
-        "Length": config_json['configuration']['column']['length'],
-        "Particle_Size": config_json['configuration']['column']['particleSize'],
-        "Temperature": config_json['configuration']['column']['temperature'],
-        "Flow": config_json['configuration']['column']['flowrate'],
-        "T0": config_json['configuration']['column']['t0'],
-        "Duration": config_json['configuration']['gradient']['duration'],
-        "x1": config_json['configuration']['gradient']['x1'],
-        "x2": config_json['configuration']['gradient']['x2'],
-        "x3": config_json['configuration']['gradient']['x3'],
-        "x4": config_json['configuration']['gradient']['x4'],
-        "x5": config_json['configuration']['gradient']['x5'],
-        "x6": config_json['configuration']['gradient']['x6'],
-        "x7": config_json['configuration']['gradient']['x7'],
-        "x8": config_json['configuration']['gradient']['x8'],
-        "x9": config_json['configuration']['gradient']['x9'],
-        "x10": config_json['configuration']['gradient']['x10'],
-        "Intercept": config_json['configuration']['gradient']['intercept'],
-        "Class": config_json['family']
-    }'''
     config = {
         "eluent_1": config_json['configuration']['eluent_1'],
         "eluent_2": config_json['configuration']['eluent_2'],
