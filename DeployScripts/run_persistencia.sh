@@ -148,8 +148,8 @@ EOF
 start_compose_services() {
   echo "[INFO] Iniciando servicios con docker-compose…"
 
-  # Eliminar cualquier contenedor persistencia-api existente (evita conflicto de nombre)
-  if docker ps -a --filter "name=^/persistencia-api$" | grep -q .; then
+  # Eliminar contenedor "persistencia-api" si existe (evita conflicto de nombre)
+  if docker ps -a --filter "name=persistencia-api" | grep -q .; then
     echo "[INFO] Eliminando contenedor previo 'persistencia-api'…"
     docker rm -f persistencia-api
   fi
