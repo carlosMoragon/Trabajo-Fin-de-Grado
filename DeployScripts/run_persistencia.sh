@@ -47,7 +47,7 @@ install_docker_if_missing() {
     systemctl start docker
 
   else
-    echo "❌ Distribución no soportada automáticamente. Instala Docker manualmente." >&2
+    echo "Distribución no soportada automáticamente. Instala Docker manualmente." >&2
     exit 1
   fi
 
@@ -85,7 +85,7 @@ install_docker_compose_if_missing() {
 
   # Verificar que ya existe la librería libcrypt.so.1, requerido arriba.
   if ! command -v docker-compose &>/dev/null; then
-    echo "❌ Falla al instalar docker-compose." >&2
+    echo "Falla al instalar docker-compose." >&2
     exit 1
   fi
 
@@ -122,7 +122,7 @@ services:
     depends_on:
       - mongodb
     ports:
-      - "8010:8010"
+      - "80:8010"
     networks:
       - app-network
     environment:
