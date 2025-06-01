@@ -83,7 +83,7 @@ install_docker_compose_if_missing() {
     -o /usr/local/bin/docker-compose
   chmod +x /usr/local/bin/docker-compose
 
-  # Verificar que ya existe la librería libcrypt.so.1, requerido arriba.
+  # Verificar que ya existe el comando docker-compose
   if ! command -v docker-compose &>/dev/null; then
     echo "Falla al instalar docker-compose." >&2
     exit 1
@@ -147,6 +147,12 @@ EOF
 
 start_compose_services() {
   echo "[INFO] Iniciando servicios con docker-compose…"
+
+  # Eliminar cualquier contenedor persistencia-api existente (evita conflicto de nombre)
+  if docker ps -a --filter "name=^/persistencia-api$" | grep -q .; then
+    echo "[INFO] Eliminando contenedor previo 'persistencia-api'…"
+    docker rm -f persistencia-api
+  fi
 
   # Detener y limpiar cualquier stack anterior (incluye volúmenes anónimos)
   docker-compose down -v
