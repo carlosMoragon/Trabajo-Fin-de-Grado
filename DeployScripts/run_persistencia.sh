@@ -154,6 +154,10 @@ start_compose_services() {
     docker rm -f persistencia-api
   fi
 
+  # Hacer pull de la última versión de la imagen de la API
+  echo "[INFO] Haciendo pull de la imagen de la API: ${API_IMAGE}"
+  docker-compose pull api
+
   # Detener y limpiar cualquier stack anterior (incluye volúmenes anónimos)
   docker-compose down -v
 
