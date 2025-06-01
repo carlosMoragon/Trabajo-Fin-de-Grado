@@ -3,9 +3,10 @@
 # run_persistencia.sh
 #
 # • Instala Docker si no está presente.
-# • Instala Docker Compose (v1.29.2) si no está presente.
-# • Genera/asegura un docker-compose.yml que arranca MongoDB + API (imagen de Docker Hub).
-# • Lanza ambos contenedores con docker-compose up -d.
+# • Instala el paquete libxcrypt-compat para que docker-compose standalone funcione.
+# • Instala Docker Compose v1.29.2 si no está presente.
+# • Genera docker-compose.yml para MongoDB + API (imagen de Docker Hub).
+# • Lanza ambos servicios con docker-compose up -d.
 #
 # Uso:
 #   cd DeployScripts
@@ -46,14 +47,28 @@ install_docker_if_missing() {
     systemctl start docker
 
   else
-    echo "Distribución no soportada automáticamente. Instala Docker manualmente." >&2
+    echo "❌ Distribución no soportada automáticamente. Instala Docker manualmente." >&2
     exit 1
   fi
 
   echo "[INFO] Docker instalado y arrancado correctamente."
 }
 
-# -------------- 2. Instalar Docker Compose (v1.29.2) si falta --------------
+# -------------- 2. Instalar libxcrypt-compat si falta --------------
+
+install_libcrypt_compat() {
+  if ldconfig -p | grep -q "libcrypt.so.1"; then
+    echo "[INFO] libcrypt.so.1 ya está presente."
+    return
+  fi
+
+  echo "[INFO] Instalando libxcrypt-compat para compatibilidad con docker-compose..."
+  # En Amazon Linux 2023, este paquete proporciona libcrypt.so.1
+  dnf install -y libxcrypt-compat
+  echo "[INFO] libxcrypt-compat instalado."
+}
+
+# -------------- 3. Instalar Docker Compose v1.29.2 si falta --------------
 
 install_docker_compose_if_missing() {
   if command -v docker-compose &>/dev/null; then
@@ -63,34 +78,29 @@ install_docker_compose_if_missing() {
 
   echo "[INFO] Docker Compose no está instalado. Instalando v1.29.2..."
 
-  # Descarga binario y lo coloca en /usr/local/bin
-  sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" \
+  # Descarga binario
+  curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" \
     -o /usr/local/bin/docker-compose
-  sudo chmod +x /usr/local/bin/docker-compose
+  chmod +x /usr/local/bin/docker-compose
 
-  # Verificar instalación
+  # Verificar que ya existe la librería libcrypt.so.1, requerido arriba.
   if ! command -v docker-compose &>/dev/null; then
-    echo "Falla al instalar docker-compose." >&2
+    echo "❌ Falla al instalar docker-compose." >&2
     exit 1
   fi
 
   echo "[INFO] Docker Compose instalado (versión: $(docker-compose --version))."
 }
 
-# -------------- 3. Asegurar que exista el docker-compose.yml --------------
+# -------------- 4. Asegurar que exista el docker-compose.yml --------------
 
 ensure_compose_file() {
   local compose_path="./docker-compose.yml"
 
-  # Si ya existe, no lo sobrescribimos. Si quieres regenéralo manualmente aquí.
-  if [[ -f "$compose_path" ]]; then
-    echo "[INFO] Ya existe docker-compose.yml. Se utilizará el fichero existente."
-    return
-  fi
-
-  echo "[INFO] Creando docker-compose.yml para MongoDB + API..."
-
-  cat > "$compose_path" << 'EOF'
+  # Si no existe, lo crea
+  if [[ ! -f "$compose_path" ]]; then
+    echo "[INFO] Creando docker-compose.yml para MongoDB + API..."
+    cat > "$compose_path" << 'EOF'
 version: '3.8'
 
 services:
@@ -112,7 +122,7 @@ services:
     depends_on:
       - mongodb
     ports:
-      - "80:8010"
+      - "8010:8010"
     networks:
       - app-network
     environment:
@@ -127,20 +137,22 @@ networks:
   app-network:
     driver: bridge
 EOF
-
-  echo "[INFO] docker-compose.yml creado."
+    echo "[INFO] docker-compose.yml creado."
+  else
+    echo "[INFO] Ya existe docker-compose.yml. Se usará el existente."
+  fi
 }
 
-# -------------- 4. Iniciar MongoDB + API con docker-compose --------------
+# -------------- 5. Iniciar MongoDB + API con docker-compose --------------
 
 start_compose_services() {
-  echo "[INFO] Iniciando servicios con docker-compose..."
+  echo "[INFO] Iniciando servicios con docker-compose…"
 
-  # Primero, detener/limpiar si existiera un proyecto anterior
-  sudo docker-compose down -v
+  # Detener y limpiar cualquier stack anterior (incluye volúmenes anónimos)
+  docker-compose down -v
 
-  # Ahora levantar en background (detached)
-  sudo docker-compose up -d
+  # Levantar en modo “detached”
+  docker-compose up -d
 
   echo "[OK] MongoDB y API arrancados. Verifica con 'docker ps'."
 }
@@ -149,6 +161,7 @@ start_compose_services() {
 echo "=== run_persistencia.sh START ==="
 
 install_docker_if_missing
+install_libcrypt_compat
 install_docker_compose_if_missing
 ensure_compose_file
 start_compose_services
