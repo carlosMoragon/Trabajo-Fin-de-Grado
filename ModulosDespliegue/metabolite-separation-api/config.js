@@ -14,7 +14,7 @@ const config = {
   NAMEDB: process.env.DATABASE_NAME || 'metabolite-separation-api',
   USERDB: process.env.DATABASE_USER || 'root',
   PASSWORDDB: process.env.DATABASE_PASSWORD || 'rootpassword',
-  PREDICTOR_HOST: process.env.PREDICTOR_HOST || '127.0.0.1',//'predictor',
+  PREDICTOR_HOST: process.env.PREDICTOR_HOST || '192.168.189.172',//'127.0.0.1',//'predictor',
   PREDICTOR_PORT: process.env.PREDICTOR_PORT || 8000,
   DATABASE_API_HOST: process.env.DATABASE_API_HOST || '127.0.0.1',
   DATABASE_API_PORT: process.env.DATABASE_API_PORT || 8010

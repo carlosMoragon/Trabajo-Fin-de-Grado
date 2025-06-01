@@ -28,7 +28,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/predict_response'
-        '400':
+        '422':
           description: Bad request
         '404':
           description: Class not found
@@ -85,7 +85,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/recommend_family_response'
-        '400':
+        '422':
           description: Bad request
         '404':
           description: No suitable class found
@@ -238,19 +238,28 @@ components:
           type: number
 
     families_response:
-      type: array
-      items:
-        type: object
-        properties:
-          class:
-            type: string
-            example: "Azoles"
-          CHEMOTID:
-            type: string
-            example: "0000436"
-          API_version:
-            type: string
-            example: "1"
+      type: object
+      required:
+        - families
+      properties:
+        families:
+          type: array
+          items:
+            type: object
+            required:
+              - class
+              - CHEMONTID
+              - API_version
+            properties:
+              class:
+                type: string
+                example: "Azoles"
+              CHEMONTID:
+                type: string
+                example: "0000436"
+              API_version:
+                type: string
+                example: "1"
 
     feedback_request:
       type: object
