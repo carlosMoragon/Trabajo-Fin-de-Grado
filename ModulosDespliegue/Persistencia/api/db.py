@@ -1,7 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 
-#MONGO_URI = "mongodb://mongodb:27017"
-MONGO_URI = "mongodb://localhost:27017"
+MONGO_URI = "mongodb://mongodb:27017"
 DB_NAME = "metabolite-separation-api"
 
 client = AsyncIOMotorClient(MONGO_URI)

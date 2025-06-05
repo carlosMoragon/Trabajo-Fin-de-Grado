@@ -18,7 +18,6 @@ except json.JSONDecodeError as e:
     sys.exit(1)
 
 # ---------- 1. Cargar modelo y preprocesadores ----------
-#contenido = joblib.load("./modelo_xgboost.pkl")
 contenido = joblib.load("./modelo.pkl")
 
 if isinstance(contenido, dict):

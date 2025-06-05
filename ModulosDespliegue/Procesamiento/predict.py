@@ -21,8 +21,6 @@ N = config.ITERATIONS #1000
 CLASE_METABOLITO = sys.argv[1]
 
 # ---------- 1. Carga del modelo entrenado y preprocesadores ----------
-#modelo_path = "./modelo_xgboost.pkl"
-#contenido = joblib.load(modelo_path)
 contenido = joblib.load("./modelo.pkl")
 
 
@@ -127,16 +125,8 @@ formatted_config = {
             "x0": params["x0"]
         }
     },
-    #"class": params["class"],
     "score": best_trial.value
 }
 
 print(json.dumps(formatted_config, indent=4))
 
-
-#result = {
-#    "configuration": best_trial.params,
-#    "score": best_trial.value
-#}
-
-#print(json.dumps(result))
