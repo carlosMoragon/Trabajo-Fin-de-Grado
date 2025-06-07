@@ -28,6 +28,8 @@
 
 ### 2. Desplegar microservicios
 
+Los scripts de despliegue se encuentran en la carpeta: DeployScripts
+
 #### 2.1 Gateway (enrutador)
 1. Clonar o copiar `run_enrutador.sh` al servidor Gateway.  
 2. Darle permisos de ejecución:
