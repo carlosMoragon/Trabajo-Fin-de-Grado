@@ -9,7 +9,7 @@
 - **Carlos Moragón Corella**  
   Autor del proyecto  
 - **Alberto Gil de la Fuente**  
-  Tutor  
+  Co-tutor  
 - **Constantino Antonio García Martínez**  
   Co-tutor  
 
